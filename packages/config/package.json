@@ -1,0 +1,25 @@
+{
+  "name": "@marketing-workspace/config",
+  "version": "0.1.0",
+  "type": "module",
+  "private": true,
+  "main": "index.js",
+  "exports": {
+    "./eslint/base": "./eslint/base.js",
+    "./eslint/next": "./eslint/next.js",
+    "./eslint/react-internal": "./eslint/react-internal.js",
+    "./prettier": "./prettier/index.json",
+    "./typescript/*": "./typescript/*.json"
+  },
+  "dependencies": {
+    "@vercel/style-guide": "^6.0.0",
+    "eslint": "^9.39.1",
+    "eslint-config-next": "16.2.0",
+    "eslint-config-prettier": "^10.0.1",
+    "eslint-plugin-only-warn": "^1.1.0",
+    "eslint-plugin-react-compiler": "19.1.0-rc.2",
+    "globals": "^15.11.0",
+    "prettier": "^3.7.4",
+    "typescript": "5.9.2"
+  }
+}
