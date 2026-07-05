@@ -120,6 +120,81 @@ importers:
         specifier: 5.9.2
         version: 5.9.2
 
+  packages/ai:
+    devDependencies:
+      '@marketing-workspace/config':
+        specifier: workspace:*
+        version: link:../config
+      '@types/node':
+        specifier: ^22.15.3
+        version: 22.15.3
+      eslint:
+        specifier: ^9.39.1
+        version: 9.39.1
+      typescript:
+        specifier: 5.9.2
+        version: 5.9.2
+
+  packages/analytics:
+    devDependencies:
+      '@marketing-workspace/config':
+        specifier: workspace:*
+        version: link:../config
+      '@types/node':
+        specifier: ^22.15.3
+        version: 22.15.3
+      eslint:
+        specifier: ^9.39.1
+        version: 9.39.1
+      typescript:
+        specifier: 5.9.2
+        version: 5.9.2
+
+  packages/api:
+    devDependencies:
+      '@marketing-workspace/config':
+        specifier: workspace:*
+        version: link:../config
+      '@types/node':
+        specifier: ^22.15.3
+        version: 22.15.3
+      eslint:
+        specifier: ^9.39.1
+        version: 9.39.1
+      typescript:
+        specifier: 5.9.2
+        version: 5.9.2
+
+  packages/auth:
+    devDependencies:
+      '@marketing-workspace/config':
+        specifier: workspace:*
+        version: link:../config
+      '@types/node':
+        specifier: ^22.15.3
+        version: 22.15.3
+      eslint:
+        specifier: ^9.39.1
+        version: 9.39.1
+      typescript:
+        specifier: 5.9.2
+        version: 5.9.2
+
+  packages/billing:
+    devDependencies:
+      '@marketing-workspace/config':
+        specifier: workspace:*
+        version: link:../config
+      '@types/node':
+        specifier: ^22.15.3
+        version: 22.15.3
+      eslint:
+        specifier: ^9.39.1
+        version: 9.39.1
+      typescript:
+        specifier: 5.9.2
+        version: 5.9.2
+
   packages/config:
     dependencies:
       '@vercel/style-guide':
@@ -150,6 +225,111 @@ importers:
         specifier: 5.9.2
         version: 5.9.2
 
+  packages/database:
+    devDependencies:
+      '@marketing-workspace/config':
+        specifier: workspace:*
+        version: link:../config
+      '@types/node':
+        specifier: ^22.15.3
+        version: 22.15.3
+      eslint:
+        specifier: ^9.39.1
+        version: 9.39.1
+      typescript:
+        specifier: 5.9.2
+        version: 5.9.2
+
+  packages/email:
+    devDependencies:
+      '@marketing-workspace/config':
+        specifier: workspace:*
+        version: link:../config
+      '@types/node':
+        specifier: ^22.15.3
+        version: 22.15.3
+      eslint:
+        specifier: ^9.39.1
+        version: 9.39.1
+      typescript:
+        specifier: 5.9.2
+        version: 5.9.2
+
+  packages/hooks:
+    devDependencies:
+      '@marketing-workspace/config':
+        specifier: workspace:*
+        version: link:../config
+      '@types/node':
+        specifier: ^22.15.3
+        version: 22.15.3
+      eslint:
+        specifier: ^9.39.1
+        version: 9.39.1
+      typescript:
+        specifier: 5.9.2
+        version: 5.9.2
+
+  packages/monitoring:
+    devDependencies:
+      '@marketing-workspace/config':
+        specifier: workspace:*
+        version: link:../config
+      '@types/node':
+        specifier: ^22.15.3
+        version: 22.15.3
+      eslint:
+        specifier: ^9.39.1
+        version: 9.39.1
+      typescript:
+        specifier: 5.9.2
+        version: 5.9.2
+
+  packages/notifications:
+    devDependencies:
+      '@marketing-workspace/config':
+        specifier: workspace:*
+        version: link:../config
+      '@types/node':
+        specifier: ^22.15.3
+        version: 22.15.3
+      eslint:
+        specifier: ^9.39.1
+        version: 9.39.1
+      typescript:
+        specifier: 5.9.2
+        version: 5.9.2
+
+  packages/reports:
+    devDependencies:
+      '@marketing-workspace/config':
+        specifier: workspace:*
+        version: link:../config
+      '@types/node':
+        specifier: ^22.15.3
+        version: 22.15.3
+      eslint:
+        specifier: ^9.39.1
+        version: 9.39.1
+      typescript:
+        specifier: 5.9.2
+        version: 5.9.2
+
+  packages/types:
+    devDependencies:
+      '@marketing-workspace/config':
+        specifier: workspace:*
+        version: link:../config
+      '@types/node':
+        specifier: ^22.15.3
+        version: 22.15.3
+      eslint:
+        specifier: ^9.39.1
+        version: 9.39.1
+      typescript:
+        specifier: 5.9.2
+        version: 5.9.2
+
   packages/ui:
     dependencies:
       react:
@@ -174,6 +354,51 @@ importers:
       '@types/react-dom':
         specifier: 19.2.2
         version: 19.2.2(@types/react@19.2.2)
+      eslint:
+        specifier: ^9.39.1
+        version: 9.39.1
+      typescript:
+        specifier: 5.9.2
+        version: 5.9.2
+
+  packages/utils:
+    devDependencies:
+      '@marketing-workspace/config':
+        specifier: workspace:*
+        version: link:../config
+      '@types/node':
+        specifier: ^22.15.3
+        version: 22.15.3
+      eslint:
+        specifier: ^9.39.1
+        version: 9.39.1
+      typescript:
+        specifier: 5.9.2
+        version: 5.9.2
+
+  packages/validation:
+    devDependencies:
+      '@marketing-workspace/config':
+        specifier: workspace:*
+        version: link:../config
+      '@types/node':
+        specifier: ^22.15.3
+        version: 22.15.3
+      eslint:
+        specifier: ^9.39.1
+        version: 9.39.1
+      typescript:
+        specifier: 5.9.2
+        version: 5.9.2
+
+  packages/workflows:
+    devDependencies:
+      '@marketing-workspace/config':
+        specifier: workspace:*
+        version: link:../config
+      '@types/node':
+        specifier: ^22.15.3
+        version: 22.15.3
       eslint:
         specifier: ^9.39.1
         version: 9.39.1

@@ -1,0 +1,2 @@
+// @marketing-workspace/monitoring
+export {};

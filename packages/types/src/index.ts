@@ -1,0 +1,2 @@
+// @marketing-workspace/types
+export {};

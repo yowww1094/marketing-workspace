@@ -1,0 +1,2 @@
+// @marketing-workspace/email
+export {};

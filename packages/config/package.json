@@ -9,7 +9,9 @@
     "./eslint/next": "./eslint/next.js",
     "./eslint/react-internal": "./eslint/react-internal.js",
     "./prettier": "./prettier/index.json",
-    "./typescript/*": "./typescript/*.json"
+    "./typescript/base.json": "./typescript/base.json",
+    "./typescript/nextjs.json": "./typescript/nextjs.json",
+    "./typescript/react-library.json": "./typescript/react-library.json"
   },
   "dependencies": {
     "@vercel/style-guide": "^6.0.0",
