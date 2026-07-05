@@ -11,10 +11,13 @@
     "check-types": "next typegen && tsc --noEmit"
   },
   "dependencies": {
+    "@marketing-workspace/design-system": "workspace:*",
     "@marketing-workspace/ui": "workspace:*",
+    "@tailwindcss/postcss": "^4.0.0",
     "next": "16.2.0",
     "react": "^19.2.0",
-    "react-dom": "^19.2.0"
+    "react-dom": "^19.2.0",
+    "tailwindcss": "^4.0.0"
   },
   "devDependencies": {
     "@marketing-workspace/config": "workspace:*",

@@ -3,7 +3,10 @@
   "version": "0.0.0",
   "private": true,
   "exports": {
-    "./*": "./src/*.tsx"
+    "./*": [
+      "./src/*.tsx",
+      "./src/*.ts"
+    ]
   },
   "scripts": {
     "lint": "eslint . --max-warnings 0",
@@ -20,12 +23,17 @@
     "typescript": "5.9.2"
   },
   "dependencies": {
+    "@hookform/resolvers": "^5.4.0",
     "@marketing-workspace/design-system": "workspace:*",
+    "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "lucide-react": "^0.470.0",
+    "radix-ui": "^1.6.1",
     "react": "^19.2.0",
     "react-dom": "^19.2.0",
+    "react-hook-form": "^7.81.0",
     "tailwind-merge": "^2.6.0",
-    "tailwindcss": "^4.0.0"
+    "tailwindcss": "^4.0.0",
+    "zod": "^4.4.3"
   }
 }
