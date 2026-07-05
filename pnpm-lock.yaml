@@ -54,6 +54,9 @@ importers:
 
   apps/app:
     dependencies:
+      '@marketing-workspace/auth':
+        specifier: workspace:*
+        version: link:../../packages/auth
       '@marketing-workspace/ui':
         specifier: workspace:*
         version: link:../../packages/ui
