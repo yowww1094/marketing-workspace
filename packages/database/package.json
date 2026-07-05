@@ -8,7 +8,10 @@
     "lint": "eslint . --max-warnings 0",
     "check-types": "tsc --noEmit"
   },
-  "dependencies": {},
+  "dependencies": {
+    "@supabase/ssr": "^0.12.0",
+    "@supabase/supabase-js": "^2.110.0"
+  },
   "devDependencies": {
     "@marketing-workspace/config": "workspace:*",
     "@types/node": "^22.15.3",

@@ -1,2 +1,3 @@
-// @marketing-workspace/database
-export {};
+export * from './types';
+export * from './client';
+export * from './repositories/product.repository';
