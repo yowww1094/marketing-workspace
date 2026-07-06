@@ -4,7 +4,7 @@ import { createClient } from '@marketing-workspace/auth/server';
 import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
 
-export async function login(formData: FormData) {
+export async function login(prevState: any, formData: FormData) {
   const supabase = await createClient();
   const data = {
     email: formData.get('email') as string,
@@ -21,14 +21,19 @@ export async function login(formData: FormData) {
   redirect('/');
 }
 
-export async function signup(formData: FormData) {
+export async function signup(prevState: any, formData: FormData) {
   const supabase = await createClient();
-  const data = {
+  const { error } = await supabase.auth.signUp({
     email: formData.get('email') as string,
     password: formData.get('password') as string,
-  };
-
-  const { error } = await supabase.auth.signUp(data);
+    options: {
+      data: {
+        first_name: formData.get('firstName') as string,
+        last_name: formData.get('lastName') as string,
+        company: formData.get('company') as string,
+      }
+    }
+  });
 
   if (error) {
     return { error: error.message };
@@ -39,7 +44,7 @@ export async function signup(formData: FormData) {
   redirect('/');
 }
 
-export async function requestPasswordReset(formData: FormData) {
+export async function requestPasswordReset(prevState: any, formData: FormData) {
   const supabase = await createClient();
   const email = formData.get('email') as string;
 
@@ -53,7 +58,7 @@ export async function requestPasswordReset(formData: FormData) {
   return { success: true };
 }
 
-export async function updatePassword(formData: FormData) {
+export async function updatePassword(prevState: any, formData: FormData) {
   const supabase = await createClient();
   const password = formData.get('password') as string;
 

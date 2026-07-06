@@ -1,5 +1,5 @@
 {
-  "name": "@marketing-workspace/billing",
+  "name": "@marketing-workspace/storage",
   "version": "0.1.0",
   "private": true,
   "main": "./src/index.ts",
@@ -9,8 +9,7 @@
     "check-types": "tsc --noEmit"
   },
   "dependencies": {
-    "@supabase/supabase-js": "^2.110.0",
-    "stripe": "^22.3.0"
+    "@supabase/supabase-js": "^2.48.1"
   },
   "devDependencies": {
     "@marketing-workspace/config": "workspace:*",

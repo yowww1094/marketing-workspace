@@ -1,7 +1,7 @@
 import { type NextRequest } from 'next/server';
 import { updateSession } from '@marketing-workspace/auth/middleware';
 
-export async function proxy(request: NextRequest) {
+export async function middleware(request: NextRequest) {
   return await updateSession(request, true); // true = enforce auth protection
 }
 
