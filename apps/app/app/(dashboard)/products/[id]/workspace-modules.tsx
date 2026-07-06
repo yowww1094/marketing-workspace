@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { Button } from '@marketing-workspace/ui/components/ui/button';
 import { generateStrategyAction } from './actions';
 import { toast } from 'sonner';
@@ -16,24 +16,19 @@ import {
   DialogTrigger,
 } from '@marketing-workspace/ui/components/ui/dialog';
 
-export function WorkspaceModules({ product, workflow }: { product: any; workflow: any }) {
+export function WorkspaceModules({ 
+  product, 
+  workflow,
+  onShowGeneratingView
+}: { 
+  product: any; 
+  workflow: any;
+  onShowGeneratingView?: () => void;
+}) {
   const router = useRouter();
   const [isGenerating, setIsGenerating] = useState(false);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const isDraft = product.status === 'draft';
-  const isProcessing = product.status === 'processing';
-
-  useEffect(() => {
-    let intervalId: NodeJS.Timeout;
-    if (isProcessing) {
-      intervalId = setInterval(() => {
-        router.refresh();
-      }, 3000); // Poll every 3 seconds while processing
-    }
-    return () => {
-      if (intervalId) clearInterval(intervalId);
-    };
-  }, [isProcessing, router]);
 
   const handleGenerate = async () => {
     try {
@@ -41,7 +36,9 @@ export function WorkspaceModules({ product, workflow }: { product: any; workflow
       setIsDialogOpen(false);
       await generateStrategyAction(product.id);
       toast.success('Marketing strategy generation started!');
-      // router.refresh() might be needed to show the new modules, though revalidatePath in action handles it
+      if (onShowGeneratingView) {
+        onShowGeneratingView();
+      }
     } catch (e: any) {
       toast.error(e.message || 'Failed to start generation');
       setIsGenerating(false);
@@ -141,7 +138,7 @@ export function WorkspaceModules({ product, workflow }: { product: any; workflow
               ) : status === 'failed' ? (
                 <Circle className="w-5 h-5 text-[#d32f2f]" />
               ) : (
-                <Circle className="w-5 h-5 text-[#e2e2ea]" />
+                <Circle className="w-5 h-5 text-[#e2e2ea] fill-[#f1f1f5]" />
               )}
               <span className={`text-[14px] ${status === 'completed' ? 'text-[#0c0c0e] font-medium' : 'text-[#6e6e85]'}`}>
                 {jobDef.name}
@@ -150,6 +147,14 @@ export function WorkspaceModules({ product, workflow }: { product: any; workflow
           );
         })}
       </div>
+
+      {product.status === 'processing' && (
+        <div className="mt-6 pt-6 border-t border-[#e2e2ea]">
+          <Button variant="outline" className="w-full text-[#0c0c0e] border-[#e2e2ea]" onClick={onShowGeneratingView}>
+            Show Generation Timeline
+          </Button>
+        </div>
+      )}
 
       {product.status === 'completed' && (
         <div className="mt-6 pt-6 border-t border-[#e2e2ea]">
