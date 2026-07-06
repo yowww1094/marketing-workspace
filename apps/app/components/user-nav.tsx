@@ -17,6 +17,7 @@ import {
 } from "@marketing-workspace/ui/components/ui/dropdown-menu"
 
 import { User, CreditCard, Settings, LogOut } from 'lucide-react';
+import { logout } from '@/app/auth/actions';
 
 export function UserNav({ fullName, email }: { fullName: string; email: string }) {
   const initials = fullName
@@ -60,7 +61,7 @@ export function UserNav({ fullName, email }: { fullName: string; email: string }
           </DropdownMenuItem>
         </DropdownMenuGroup>
         <DropdownMenuSeparator className="bg-zinc-100 my-1" />
-        <form action="/auth/signout" method="post" className="w-full">
+        <form action={logout} className="w-full">
           <DropdownMenuItem asChild className="rounded-lg cursor-pointer focus:bg-red-50 focus:text-red-700 px-2.5 py-2 text-red-600 transition-colors">
             <button type="submit" className="w-full flex items-center">
               <LogOut className="mr-2.5 h-4 w-4" />

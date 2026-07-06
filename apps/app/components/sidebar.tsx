@@ -13,6 +13,7 @@ import {
   HelpCircle,
   BookOpen
 } from 'lucide-react';
+import { logout } from '@/app/auth/actions';
 
 const routes = [
   {
@@ -94,7 +95,7 @@ export function Sidebar() {
           <BookOpen className="h-4 w-4" />
           Documentation
         </Link>
-        <form action="/auth/signout" method="post" className="mt-2">
+        <form action={logout} className="mt-2">
           <button
             type="submit"
             className="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-red-600 hover:bg-red-50 hover:text-red-700 transition-all"
