@@ -87,8 +87,8 @@ export function WizardClient({ userId }: { userId: string }) {
     try {
       setIsSubmitting(true);
       const productId = await createProductAction(data);
-      toast.success('Product creation started!');
-      router.push(`/products`); // Or redirect to specific product page
+      toast.success('Product saved as draft!');
+      router.push(`/products/${productId}`);
     } catch (e: any) {
       toast.error(e.message || 'Failed to create product');
     } finally {
@@ -165,7 +165,7 @@ export function WizardClient({ userId }: { userId: string }) {
                 </Button>
               ) : (
                 <Button type="submit" disabled={isSubmitting} className="bg-[#5b5bd6] hover:bg-[#4a4ac0] text-white drop-shadow-sm h-[36px] rounded-[8px] px-4">
-                  {isSubmitting ? 'Generating...' : 'Generate Marketing Workspace'}
+                  {isSubmitting ? 'Saving...' : 'Save Product Details'}
                   {!isSubmitting && <ArrowRight className="w-4 h-4 ml-2" />}
                 </Button>
               )}

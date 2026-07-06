@@ -43,7 +43,7 @@ export async function createProductAction(data: CreateProductInput) {
     .from('products')
     .insert({
       user_id: user.id,
-      status: 'processing',
+      status: 'draft',
       // Basic Info
       name: validated.name,
       category: validated.category,
@@ -86,19 +86,6 @@ export async function createProductAction(data: CreateProductInput) {
   if (error || !product) {
     console.error('Failed to insert product:', error);
     throw new Error('Failed to create product');
-  }
-
-  // 4. Insert initial workflow
-  const { error: wfError } = await supabase
-    .from('workflows')
-    .insert({
-      product_id: product.id,
-      status: 'pending',
-    });
-
-  if (wfError) {
-    console.error('Failed to create workflow:', wfError);
-    // Continue anyway or fail? Let's just log it for now.
   }
 
   revalidatePath('/products');
