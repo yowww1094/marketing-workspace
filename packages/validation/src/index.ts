@@ -1,2 +1,1 @@
-// @marketing-workspace/validation
-export {};
+export * from './products';

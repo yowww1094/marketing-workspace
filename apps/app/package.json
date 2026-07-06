@@ -11,14 +11,18 @@
     "check-types": "next typegen && tsc --noEmit"
   },
   "dependencies": {
+    "@hookform/resolvers": "^5.4.0",
     "@marketing-workspace/auth": "workspace:*",
     "@marketing-workspace/billing": "workspace:*",
     "@marketing-workspace/design-system": "workspace:*",
     "@marketing-workspace/ui": "workspace:*",
+    "@marketing-workspace/validation": "workspace:^",
+    "browser-image-compression": "^2.0.2",
     "lucide-react": "^0.470.0",
     "next": "16.2.0",
     "react": "^19.2.0",
     "react-dom": "^19.2.0",
+    "react-hook-form": "^7.81.0",
     "sonner": "^2.0.7"
   },
   "devDependencies": {
