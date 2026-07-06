@@ -35,6 +35,7 @@ export const CreateProductSchema = z.object({
 
   // Step 6: Business Goals
   business_goals: z.array(z.string()).default([]),
+  business_goals_text: z.string().optional(),
 
   // Step 7: Target Market
   target_country: z.string().optional(),

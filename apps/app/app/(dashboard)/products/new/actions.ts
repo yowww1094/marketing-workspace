@@ -73,7 +73,12 @@ export async function createProductAction(data: CreateProductInput) {
       // Competitors & Goals
       known_competitors: validated.known_competitors,
       competitor_urls: validated.competitor_urls,
-      business_goals: validated.business_goals,
+      business_goals: [
+        ...validated.business_goals,
+        ...(validated.business_goals_text 
+              ? validated.business_goals_text.split('\n').map(l => l.trim()).filter(Boolean) 
+              : [])
+      ],
     })
     .select('id')
     .single();
