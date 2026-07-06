@@ -2,6 +2,7 @@
 
 import { createClient } from '@marketing-workspace/auth/server';
 import { revalidatePath } from 'next/cache';
+import { createJobsForWorkflow, tickWorkflowEngine } from '@marketing-workspace/workflows';
 
 export async function generateStrategyAction(productId: string) {
   const supabase = await createClient();
@@ -38,18 +39,33 @@ export async function generateStrategyAction(productId: string) {
   }
 
   // 3. Create workflow
-  const { error: wfError } = await supabase
+  const { data: workflow, error: wfError } = await supabase
     .from('workflows')
     .insert({
       product_id: productId,
       status: 'pending',
-    });
+    })
+    .select('id')
+    .single();
 
-  if (wfError) {
+  if (wfError || !workflow) {
     console.error('Failed to create workflow:', wfError);
-    // Ideally we would rollback the status change here, but for phase 1 we'll just throw
     throw new Error('Failed to initialize AI workflow');
   }
+
+  // 4. Create jobs based on DAG
+  try {
+    await createJobsForWorkflow(supabase, workflow.id);
+  } catch (err: any) {
+    console.error('Failed to create jobs:', err);
+    throw new Error('Failed to initialize AI workflow jobs');
+  }
+
+  // 5. Kick off the workflow engine asynchronously
+  // In a real production app on Vercel, this might time out or be killed.
+  // Ideally, this is published to a queue or triggered via webhook.
+  // For Phase 1 / local execution, we start the recursive promise.
+  tickWorkflowEngine(supabase, workflow.id).catch(console.error);
 
   revalidatePath(`/products/${productId}`);
 }

@@ -1,20 +1,44 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Button } from '@marketing-workspace/ui/components/ui/button';
 import { generateStrategyAction } from './actions';
 import { toast } from 'sonner';
-import { Sparkles, CheckCircle2, Circle, Loader2 } from 'lucide-react';
+import { Sparkles, CheckCircle2, Circle, Loader2, AlertTriangle } from 'lucide-react';
 import { useRouter } from 'next/navigation';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from '@marketing-workspace/ui/components/ui/dialog';
 
 export function WorkspaceModules({ product, workflow }: { product: any; workflow: any }) {
   const router = useRouter();
   const [isGenerating, setIsGenerating] = useState(false);
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
   const isDraft = product.status === 'draft';
+  const isProcessing = product.status === 'processing';
+
+  useEffect(() => {
+    let intervalId: NodeJS.Timeout;
+    if (isProcessing) {
+      intervalId = setInterval(() => {
+        router.refresh();
+      }, 3000); // Poll every 3 seconds while processing
+    }
+    return () => {
+      if (intervalId) clearInterval(intervalId);
+    };
+  }, [isProcessing, router]);
 
   const handleGenerate = async () => {
     try {
       setIsGenerating(true);
+      setIsDialogOpen(false);
       await generateStrategyAction(product.id);
       toast.success('Marketing strategy generation started!');
       // router.refresh() might be needed to show the new modules, though revalidatePath in action handles it
@@ -46,23 +70,47 @@ export function WorkspaceModules({ product, workflow }: { product: any; workflow
             Review your product details on the left. When you&apos;re ready, click below to generate your complete marketing strategy and assets.
           </p>
         </div>
-        <Button 
-          onClick={handleGenerate} 
-          disabled={isGenerating}
-          className="w-full bg-[#5b5bd6] hover:bg-[#4a4ac0] text-white drop-shadow-sm h-[44px] rounded-[8px]"
-        >
-          {isGenerating ? (
-            <span className="flex items-center">
-              <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-              Initializing...
-            </span>
-          ) : (
-            <span className="flex items-center">
-              <Sparkles className="w-4 h-4 mr-2" />
-              Generate Marketing Strategy
-            </span>
-          )}
-        </Button>
+        <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+          <DialogTrigger asChild>
+            <Button 
+              disabled={isGenerating}
+              className="w-full bg-[#5b5bd6] hover:bg-[#4a4ac0] text-white drop-shadow-sm h-[44px] rounded-[8px]"
+            >
+              {isGenerating ? (
+                <span className="flex items-center">
+                  <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                  Initializing...
+                </span>
+              ) : (
+                <span className="flex items-center">
+                  <Sparkles className="w-4 h-4 mr-2" />
+                  Generate Marketing Strategy
+                </span>
+              )}
+            </Button>
+          </DialogTrigger>
+          <DialogContent className="sm:max-w-[425px]">
+            <DialogHeader>
+              <div className="flex items-center gap-2 text-amber-600 mb-2">
+                <AlertTriangle className="w-6 h-6" />
+                <DialogTitle>Confirm Generation</DialogTitle>
+              </div>
+              <DialogDescription className="text-[14px] leading-relaxed text-[#6e6e85]">
+                <strong className="text-[#0c0c0e]">Warning:</strong> After clicking start, there will be no chance to modify your product data. Any misinformation will directly affect the AI marketing strategy.
+                <br /><br />
+                Please ensure all product details are 100% correct before proceeding. You will not be able to edit this product again.
+              </DialogDescription>
+            </DialogHeader>
+            <DialogFooter className="gap-2 sm:gap-0">
+              <Button variant="outline" onClick={() => setIsDialogOpen(false)} className="text-[#0c0c0e]">
+                Cancel, let me review
+              </Button>
+              <Button onClick={handleGenerate} className="bg-[#5b5bd6] hover:bg-[#4a4ac0] text-white">
+                I am sure, Generate Strategy
+              </Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
       </div>
     );
   }

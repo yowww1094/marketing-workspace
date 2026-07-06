@@ -17,6 +17,7 @@
     "@marketing-workspace/design-system": "workspace:*",
     "@marketing-workspace/ui": "workspace:*",
     "@marketing-workspace/validation": "workspace:^",
+    "@marketing-workspace/workflows": "workspace:*",
     "browser-image-compression": "^2.0.2",
     "lucide-react": "^0.470.0",
     "next": "16.2.0",
