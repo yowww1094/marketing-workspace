@@ -1,12 +1,13 @@
 'use client';
 
-import { useFormContext } from 'react-hook-form';
+import { useFormContext, Controller } from 'react-hook-form';
 import { CreateProductInput } from '@marketing-workspace/validation';
 import { Input } from '@marketing-workspace/ui/components/ui/input';
 import { Label } from '@marketing-workspace/ui/components/ui/label';
+import { Textarea } from '@marketing-workspace/ui/components/ui/textarea';
 
 export function Step4Audience() {
-  const { register } = useFormContext<CreateProductInput>();
+  const { register, control } = useFormContext<CreateProductInput>();
 
   return (
     <div className="flex flex-col gap-6 w-full max-w-[605px] mx-auto">
@@ -44,19 +45,64 @@ export function Step4Audience() {
         </div>
       </div>
       
-      {/* For array fields like interests, pain points, etc., we can use a simple comma separated input for now to save time, or a multi-select component.
-          To keep it simple, we'll just use a text input and parse it as comma-separated or let them just type it. 
-          Actually, the Zod schema expects an array of strings. 
-          We'll need a basic tag input or just accept string and split on submit.
-          Wait, react-hook-form allows registering an array if we use useFieldArray, or we can just capture as string and let the user split it. 
-          Let's just capture them as simple inputs for this phase or use the UI component if we had one.
-          For now, I'll provide standard inputs that map to a string, but our schema expects arrays.
-          Wait, I should update the schema to accept string and split it in a transform, or just build a quick tag input.
-          Let's just use a simple string input and split in a custom onChange, or update the Zod schema. 
-          It's easier to change the schema or use a local state. I will use a local component pattern.
-      */}
-      <div className="p-4 bg-yellow-50 text-yellow-800 rounded-lg text-sm">
-        Advanced audience targeting fields (Interests, Pain Points, Buying Motivations) will be implemented with a multi-select component.
+      <div className="flex flex-col gap-1.5">
+        <Label htmlFor="target_audience_interests" className="text-[14px] font-medium text-[#0c0c0e]">
+          Interests & Hobbies (Optional)
+        </Label>
+        <Controller
+          name="target_audience_interests"
+          control={control}
+          render={({ field }) => (
+            <Textarea
+              id="target_audience_interests"
+              placeholder="e.g. Technology, Fitness, Sustainable living..."
+              className="bg-[#f6f6f9] border-[#e2e2ea] min-h-[80px] rounded-[8px] text-[14px] resize-y"
+              value={Array.isArray(field.value) ? field.value.join('\n') : ''}
+              onChange={(e) => field.onChange(e.target.value.split('\n'))}
+            />
+          )}
+        />
+        <p className="text-[12px] text-[#6e6e85] mt-1">Enter each interest on a new line.</p>
+      </div>
+
+      <div className="flex flex-col gap-1.5">
+        <Label htmlFor="target_audience_pain_points" className="text-[14px] font-medium text-[#0c0c0e]">
+          Pain Points (Optional)
+        </Label>
+        <Controller
+          name="target_audience_pain_points"
+          control={control}
+          render={({ field }) => (
+            <Textarea
+              id="target_audience_pain_points"
+              placeholder="What problems does your audience struggle with? e.g. Lack of time, High costs..."
+              className="bg-[#f6f6f9] border-[#e2e2ea] min-h-[80px] rounded-[8px] text-[14px] resize-y"
+              value={Array.isArray(field.value) ? field.value.join('\n') : ''}
+              onChange={(e) => field.onChange(e.target.value.split('\n'))}
+            />
+          )}
+        />
+        <p className="text-[12px] text-[#6e6e85] mt-1">Enter each pain point on a new line.</p>
+      </div>
+
+      <div className="flex flex-col gap-1.5">
+        <Label htmlFor="buying_motivations" className="text-[14px] font-medium text-[#0c0c0e]">
+          Buying Motivations (Optional)
+        </Label>
+        <Controller
+          name="buying_motivations"
+          control={control}
+          render={({ field }) => (
+            <Textarea
+              id="buying_motivations"
+              placeholder="Why would they buy? e.g. Social status, Saving money, Convenience..."
+              className="bg-[#f6f6f9] border-[#e2e2ea] min-h-[80px] rounded-[8px] text-[14px] resize-y"
+              value={Array.isArray(field.value) ? field.value.join('\n') : ''}
+              onChange={(e) => field.onChange(e.target.value.split('\n'))}
+            />
+          )}
+        />
+        <p className="text-[12px] text-[#6e6e85] mt-1">Enter each motivation on a new line.</p>
       </div>
     </div>
   );
