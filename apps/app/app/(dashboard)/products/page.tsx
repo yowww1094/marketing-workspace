@@ -1,5 +1,6 @@
 import { createClient } from '@marketing-workspace/auth/server';
 import { redirect } from 'next/navigation';
+import Link from 'next/link';
 import { Button } from '@marketing-workspace/ui/components/ui/button';
 import { Input } from '@marketing-workspace/ui/components/ui/input';
 import { Badge } from '@marketing-workspace/ui/components/ui/badge';
@@ -68,9 +69,11 @@ export default async function ProductsPage(props: Props) {
             {products?.length || 0} total products
           </p>
         </div>
-        <Button className="bg-[#5b5bd6] hover:bg-[#4a4ac0] text-white shadow-sm gap-2 rounded-lg h-9 px-4">
-          <Plus className="h-4 w-4" />
-          New Product
+        <Button asChild className="bg-[#5b5bd6] hover:bg-[#4a4ac0] text-white shadow-sm gap-2 rounded-lg h-9 px-4">
+          <Link href="/products/new">
+            <Plus className="h-4 w-4" />
+            New Product
+          </Link>
         </Button>
       </div>
 
@@ -153,9 +156,11 @@ export default async function ProductsPage(props: Props) {
             <p className="text-sm text-muted-foreground mb-4 max-w-sm">
               You haven't created any products yet. Get started by clicking the "New Product" button above.
             </p>
-            <Button className="bg-[#5b5bd6] hover:bg-[#4a4ac0] text-white">
-              <Plus className="h-4 w-4 mr-2" />
-              Create Product
+            <Button asChild className="bg-[#5b5bd6] hover:bg-[#4a4ac0] text-white shadow-sm gap-2 rounded-lg mt-4 px-6">
+              <Link href="/products/new">
+                <Plus className="h-4 w-4" />
+                New Product
+              </Link>
             </Button>
           </div>
         )}

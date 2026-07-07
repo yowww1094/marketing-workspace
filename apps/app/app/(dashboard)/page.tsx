@@ -66,9 +66,11 @@ export default async function DashboardPage() {
             Here's what's happening across your workspace.
           </p>
         </div>
-        <Button className="bg-[#5b5bd6] hover:bg-[#4a4ac0] text-white shadow-sm gap-2 rounded-lg">
-          <Plus className="h-4 w-4" />
-          New Product
+        <Button asChild className="bg-[#5b5bd6] hover:bg-[#4a4ac0] text-white shadow-sm gap-2 rounded-lg">
+          <Link href="/products/new">
+            <Plus className="h-4 w-4" />
+            New Product
+          </Link>
         </Button>
       </div>
 

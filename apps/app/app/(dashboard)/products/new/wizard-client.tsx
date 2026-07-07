@@ -145,7 +145,7 @@ export function WizardClient({ userId }: { userId: string }) {
             {/* Navigation Buttons */}
             <div className="flex items-center justify-between w-full mt-6">
               <div className="flex items-center gap-2">
-                <Button type="button" variant="ghost" onClick={() => window.history.back()} className="text-[#6e6e85]">
+                <Button type="button" variant="ghost" onClick={() => router.push('/products')} className="text-red-500 hover:text-red-500 hover:bg-zinc-100 transition-colors">
                   Cancel
                 </Button>
                 {currentStep > 1 && (
@@ -153,9 +153,6 @@ export function WizardClient({ userId }: { userId: string }) {
                     Back
                   </Button>
                 )}
-                <Button type="button" variant="outline" className="text-[#0c0c0e] border-[#e2e2ea]">
-                  Save Draft
-                </Button>
               </div>
 
               {currentStep < steps.length ? (
