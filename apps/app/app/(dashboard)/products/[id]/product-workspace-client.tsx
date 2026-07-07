@@ -20,7 +20,7 @@ export function ProductWorkspaceClient({ product, workflow }: { product: any; wo
     if (isProcessing) {
       intervalId = setInterval(() => {
         router.refresh();
-      }, 3000); // Poll every 3 seconds while processing
+      }, 10000); // Poll every 3 seconds while processing
     }
     
     // Auto-hide the generating view when it finishes
