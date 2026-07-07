@@ -72,3 +72,39 @@ export async function generateStrategyAction(productId: string) {
 
   revalidatePath(`/products/${productId}`);
 }
+
+export async function retryFailedJobsAction(productId: string, workflowId: string) {
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+
+  if (!user) {
+    throw new Error('Unauthorized');
+  }
+
+  // 1. Verify product ownership
+  const { data: product, error } = await supabase
+    .from('products')
+    .select('id')
+    .eq('id', productId)
+    .eq('user_id', user.id)
+    .single();
+
+  if (error || !product) {
+    throw new Error('Product not found');
+  }
+
+  const adminClient = createAdminClient();
+  
+  // 2. Set ALL failed jobs back to pending
+  await adminClient.from('jobs').update({ status: 'pending', result: null })
+    .eq('workflow_id', workflowId)
+    .eq('status', 'failed');
+  
+  // 3. Ensure product is processing
+  await adminClient.from('products').update({ status: 'processing' }).eq('id', productId);
+
+  // 4. Restart engine
+  tickWorkflowEngine(adminClient, workflowId).catch(console.error);
+  
+  revalidatePath(`/products/${productId}`);
+}

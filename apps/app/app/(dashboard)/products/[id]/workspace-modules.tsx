@@ -2,9 +2,9 @@
 
 import { useState } from 'react';
 import { Button } from '@marketing-workspace/ui/components/ui/button';
-import { generateStrategyAction } from './actions';
+import { generateStrategyAction, retryFailedJobsAction } from './actions';
 import { toast } from 'sonner';
-import { Sparkles, CheckCircle2, Circle, Loader2, AlertTriangle } from 'lucide-react';
+import { Sparkles, CheckCircle2, Circle, Loader2, AlertTriangle, XCircle, RefreshCw } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import {
   Dialog,
@@ -27,6 +27,7 @@ export function WorkspaceModules({
 }) {
   const router = useRouter();
   const [isGenerating, setIsGenerating] = useState(false);
+  const [isRetrying, setIsRetrying] = useState(false);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const isDraft = product.status === 'draft';
 
@@ -42,6 +43,21 @@ export function WorkspaceModules({
     } catch (e: any) {
       toast.error(e.message || 'Failed to start generation');
       setIsGenerating(false);
+    }
+  };
+
+  const handleRetryFailed = async () => {
+    try {
+      setIsRetrying(true);
+      await retryFailedJobsAction(product.id, workflow.id);
+      toast.success('Retrying failed jobs...');
+      if (onShowGeneratingView) {
+        onShowGeneratingView();
+      }
+    } catch (e: any) {
+      toast.error(e.message || 'Failed to retry jobs');
+    } finally {
+      setIsRetrying(false);
     }
   };
 
@@ -114,6 +130,7 @@ export function WorkspaceModules({
 
   // If processing or completed, show the workflow progress
   const jobs = workflow?.jobs || [];
+  const hasFailedJobs = jobs.some((j: any) => j.status === 'failed');
   
   return (
     <div className="flex flex-col border border-[#e2e2ea] rounded-[16px] p-6 bg-white shadow-sm w-full sticky top-[112px]">
@@ -136,11 +153,11 @@ export function WorkspaceModules({
               ) : status === 'running' ? (
                 <Loader2 className="w-5 h-5 text-[#b26a00] animate-spin" />
               ) : status === 'failed' ? (
-                <Circle className="w-5 h-5 text-[#d32f2f]" />
+                <XCircle className="w-5 h-5 text-[#ef4444]" />
               ) : (
                 <Circle className="w-5 h-5 text-[#e2e2ea] fill-[#f1f1f5]" />
               )}
-              <span className={`text-[14px] ${status === 'completed' ? 'text-[#0c0c0e] font-medium' : 'text-[#6e6e85]'}`}>
+              <span className={`text-[14px] ${status === 'completed' ? 'text-[#0c0c0e] font-medium' : status === 'failed' ? 'text-[#ef4444] font-medium' : 'text-[#6e6e85]'}`}>
                 {jobDef.name}
               </span>
             </div>
@@ -148,7 +165,20 @@ export function WorkspaceModules({
         })}
       </div>
 
-      {product.status === 'processing' && (
+      {hasFailedJobs && (
+        <div className="mt-6 pt-6 border-t border-[#e2e2ea]">
+          <Button 
+            onClick={handleRetryFailed} 
+            disabled={isRetrying}
+            className="w-full bg-[#5b5bd6] hover:bg-[#4a4ac0] text-white"
+          >
+            {isRetrying ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <RefreshCw className="w-4 h-4 mr-2" />}
+            Retry Failed Jobs
+          </Button>
+        </div>
+      )}
+
+      {product.status === 'processing' && !hasFailedJobs && (
         <div className="mt-6 pt-6 border-t border-[#e2e2ea]">
           <Button variant="outline" className="w-full text-[#0c0c0e] border-[#e2e2ea]" onClick={onShowGeneratingView}>
             Show Generation Timeline

@@ -12,15 +12,18 @@ export function ProductWorkspaceClient({ product, workflow }: { product: any; wo
   
   // Default to showing the full-screen generating view if it's processing
   const [showGeneratingView, setShowGeneratingView] = useState(product.status === 'processing');
-  const isProcessing = product.status === 'processing';
+  
+  const hasFailedJobs = workflow?.jobs?.some((j: any) => j.status === 'failed') || false;
+  const isProductProcessing = product.status === 'processing';
+  const shouldPoll = isProductProcessing && !hasFailedJobs;
 
   // We move the polling here so it covers both the full screen view and the modules sidebar
   useEffect(() => {
     let intervalId: NodeJS.Timeout;
-    if (isProcessing) {
+    if (shouldPoll) {
       intervalId = setInterval(() => {
         router.refresh();
-      }, 10000); // Poll every 3 seconds while processing
+      }, 10000); // Poll every 10 seconds while processing
     }
     
     // Auto-hide the generating view when it finishes
@@ -31,9 +34,9 @@ export function ProductWorkspaceClient({ product, workflow }: { product: any; wo
     return () => {
       if (intervalId) clearInterval(intervalId);
     };
-  }, [isProcessing, router, product.status, showGeneratingView]);
+  }, [shouldPoll, router, product.status, showGeneratingView]);
 
-  if (showGeneratingView && isProcessing) {
+  if (showGeneratingView && isProductProcessing) {
     return (
       <div className="flex flex-col w-full min-h-screen bg-[#f8f8fb] pt-[88px] pb-[32px] px-[32px]">
         <StrategyGeneratingView 

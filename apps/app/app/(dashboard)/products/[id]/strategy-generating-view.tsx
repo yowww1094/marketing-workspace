@@ -1,8 +1,9 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { CheckCircle2, Circle, Loader2, Lightbulb, ArrowRight, Activity } from 'lucide-react';
+import { CheckCircle2, Circle, Loader2, Lightbulb, ArrowRight, Activity, XCircle, RefreshCw } from 'lucide-react';
 import { Button } from '@marketing-workspace/ui/components/ui/button';
+import { retryFailedJobsAction } from './actions';
 
 const TIPS = [
   "AI models analyze 50+ sources including industry reports, public filings, and social signals.",
@@ -21,6 +22,7 @@ export function StrategyGeneratingView({
   onContinueInBackground: () => void;
 }) {
   const [tipIndex, setTipIndex] = useState(0);
+  const [isRetrying, setIsRetrying] = useState(false);
 
   const jobs = workflow?.jobs || [];
   
@@ -43,6 +45,19 @@ export function StrategyGeneratingView({
     const job = jobs.find((j: any) => j.type === def.type);
     return job?.status === 'running' || job?.status === 'pending' || !job;
   });
+  
+  const hasFailedJobs = jobs.some((j: any) => j.status === 'failed');
+
+  const handleRetryFailed = async () => {
+    setIsRetrying(true);
+    try {
+      await retryFailedJobsAction(product.id, workflow.id);
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setIsRetrying(false);
+    }
+  };
 
   return (
     <div className="flex flex-col items-center w-full max-w-[672px] mx-auto pt-[40px]">
@@ -75,10 +90,31 @@ export function StrategyGeneratingView({
         </p>
 
         <div className="flex items-center gap-2 mb-2 text-[#5b5bd6]">
-          <Activity className="w-4 h-4 animate-pulse" />
-          <span className="text-[14px] font-medium">
-            {activeJobDef ? `Running: ${activeJobDef.name}...` : 'Wrapping up...'}
-          </span>
+          {hasFailedJobs ? (
+            <div className="flex flex-col items-center gap-3 mt-2">
+              <div className="flex items-center gap-2">
+                <XCircle className="w-4 h-4 text-[#ef4444]" />
+                <span className="text-[14px] font-medium text-[#ef4444]">
+                  Workflow paused due to failure.
+                </span>
+              </div>
+              <Button 
+                onClick={handleRetryFailed} 
+                disabled={isRetrying}
+                className="bg-[#5b5bd6] hover:bg-[#4a4ac0] text-white h-8 text-[13px] rounded-[6px]"
+              >
+                {isRetrying ? <Loader2 className="w-3.5 h-3.5 mr-2 animate-spin" /> : <RefreshCw className="w-3.5 h-3.5 mr-2" />}
+                Retry Failed Jobs
+              </Button>
+            </div>
+          ) : (
+            <>
+              <Activity className="w-4 h-4 animate-pulse" />
+              <span className="text-[14px] font-medium">
+                {activeJobDef ? `Running: ${activeJobDef.name}...` : 'Wrapping up...'}
+              </span>
+            </>
+          )}
         </div>
         
         <p className="text-[12px] text-[#6e6e85]">
@@ -101,6 +137,8 @@ export function StrategyGeneratingView({
                 <div className="flex items-center gap-3">
                   {status === 'completed' ? (
                     <CheckCircle2 className="w-5 h-5 text-[#00a36c]" />
+                  ) : status === 'failed' ? (
+                    <XCircle className="w-5 h-5 text-[#ef4444]" />
                   ) : status === 'running' ? (
                     <div className="relative flex items-center justify-center w-5 h-5">
                       <div className="absolute w-5 h-5 bg-[#5b5bd6] rounded-full opacity-20 animate-ping"></div>
@@ -109,14 +147,15 @@ export function StrategyGeneratingView({
                   ) : (
                     <Circle className="w-5 h-5 text-[#e2e2ea] fill-[#f1f1f5]" />
                   )}
-                  <span className={`text-[14px] ${status === 'completed' ? 'text-[#0c0c0e]' : status === 'running' ? 'text-[#0c0c0e] font-medium' : 'text-[#6e6e85]'}`}>
+                  <span className={`text-[14px] ${status === 'completed' ? 'text-[#0c0c0e]' : status === 'running' ? 'text-[#0c0c0e] font-medium' : status === 'failed' ? 'text-[#ef4444] font-medium' : 'text-[#6e6e85]'}`}>
                     {jobDef.name}
                   </span>
                 </div>
-                <div>
+                <div className="flex items-center gap-3">
                   {status === 'completed' && <span className="text-[12px] text-[#00a36c]">Done</span>}
                   {status === 'running' && <span className="text-[12px] text-[#5b5bd6]">Running</span>}
                   {status === 'pending' && <span className="text-[12px] text-[#6e6e85]">Pending</span>}
+                  {status === 'failed' && <span className="text-[12px] text-[#ef4444]">Failed</span>}
                 </div>
               </div>
             );

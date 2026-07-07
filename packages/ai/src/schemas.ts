@@ -8,6 +8,13 @@ export const ImageAnalysisSchema = z.object({
   packaging_details: z.string().optional().describe('Details about the product packaging if visible')
 });
 
+// product_extraction
+export const ProductExtractionSchema = z.object({
+  extracted_features: z.array(z.string()),
+  core_functionality: z.string(),
+  unique_attributes: z.array(z.string())
+});
+
 // market_research
 export const MarketResearchSchema = z.object({
   market_size: z.string().describe('Estimated market size or growth potential'),
@@ -105,12 +112,13 @@ export const ReportGenerationSchema = z.object({
 // Map of job_type to its corresponding Zod schema
 export const JobSchemas: Record<string, z.ZodType<any>> = {
   image_analysis: ImageAnalysisSchema,
+  product_extraction: ProductExtractionSchema,
   market_research: MarketResearchSchema,
   competitor_analysis: CompetitorAnalysisSchema,
-  personas: PersonasSchema,
+  customer_personas: PersonasSchema,
   positioning: PositioningSchema,
-  strategy: StrategySchema,
-  seo: SeoSchema,
-  content: ContentSchema,
+  marketing_strategy: StrategySchema,
+  seo_strategy: SeoSchema,
+  content_generation: ContentSchema,
   report_generation: ReportGenerationSchema
 };
