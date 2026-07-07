@@ -1,6 +1,7 @@
 'use server';
 
 import { createClient } from '@marketing-workspace/auth/server';
+import { createAdminClient } from '@marketing-workspace/auth/admin';
 import { revalidatePath } from 'next/cache';
 import { createJobsForWorkflow, tickWorkflowEngine } from '@marketing-workspace/workflows';
 
@@ -28,18 +29,20 @@ export async function generateStrategyAction(productId: string) {
     throw new Error('Marketing strategy has already been generated or is processing.');
   }
 
-  // 2. Update status to processing
-  const { error: updateError } = await supabase
+  // 2. Update status to processing using admin client
+  const adminClient = createAdminClient();
+  const { error: updateError } = await adminClient
     .from('products')
     .update({ status: 'processing' })
     .eq('id', productId);
 
   if (updateError) {
+    console.log(productId, updateError)
     throw new Error('Failed to update product status');
   }
 
   // 3. Create workflow
-  const { data: workflow, error: wfError } = await supabase
+  const { data: workflow, error: wfError } = await adminClient
     .from('workflows')
     .insert({
       product_id: productId,
@@ -55,7 +58,7 @@ export async function generateStrategyAction(productId: string) {
 
   // 4. Create jobs based on DAG
   try {
-    await createJobsForWorkflow(supabase, workflow.id);
+    await createJobsForWorkflow(adminClient, workflow.id);
   } catch (err: any) {
     console.error('Failed to create jobs:', err);
     throw new Error('Failed to initialize AI workflow jobs');
@@ -65,7 +68,7 @@ export async function generateStrategyAction(productId: string) {
   // In a real production app on Vercel, this might time out or be killed.
   // Ideally, this is published to a queue or triggered via webhook.
   // For Phase 1 / local execution, we start the recursive promise.
-  tickWorkflowEngine(supabase, workflow.id).catch(console.error);
+  tickWorkflowEngine(adminClient, workflow.id).catch(console.error);
 
   revalidatePath(`/products/${productId}`);
 }

@@ -5,7 +5,8 @@
   "exports": {
     "./server": "./src/server.ts",
     "./client": "./src/client.ts",
-    "./middleware": "./src/middleware.ts"
+    "./middleware": "./src/middleware.ts",
+    "./admin": "./src/admin.ts"
   },
   "scripts": {
     "lint": "eslint . --max-warnings 0",
