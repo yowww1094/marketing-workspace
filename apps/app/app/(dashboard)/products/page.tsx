@@ -24,7 +24,7 @@ export default async function ProductsPage(props: Props) {
 
   let query = supabase
     .from('products')
-    .select('*')
+    .select('*, workflows(*, jobs(status))')
     .eq('user_id', user.id)
     .order('updated_at', { ascending: false });
 
@@ -70,7 +70,7 @@ export default async function ProductsPage(props: Props) {
           </p>
         </div>
         <Button asChild className="bg-[#5b5bd6] hover:bg-[#4a4ac0] text-white shadow-sm gap-2 rounded-lg h-9 px-4">
-          <Link href="/products/new">
+          <Link href="/products/new" className='flex flex-row items-center justify-center'>
             <Plus className="h-4 w-4" />
             New Product
           </Link>
@@ -82,10 +82,10 @@ export default async function ProductsPage(props: Props) {
         <SearchInput />
         <div className="flex items-center gap-2">
           <div className="flex items-center border border-[#e2e2ea] rounded-lg p-0.5 bg-white">
-            <Button variant="ghost" size="icon" className="h-8 w-8 rounded-md bg-[#f1f1f5] text-zinc-950">
+            <Button variant="ghost" size="icon" className="flex flex-row items-center justify-center h-8 w-8 rounded-md bg-[#f1f1f5] text-zinc-950">
               <LayoutGrid className="h-4 w-4" />
             </Button>
-            <Button variant="ghost" size="icon" className="h-8 w-8 rounded-md text-muted-foreground hover:text-zinc-950">
+            <Button variant="ghost" size="icon" className="flex flex-row items-center justify-center h-8 w-8 rounded-md text-muted-foreground hover:text-zinc-950">
               <List className="h-4 w-4" />
             </Button>
           </div>
@@ -95,7 +95,7 @@ export default async function ProductsPage(props: Props) {
       {/* Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
         {products?.map((product) => (
-          <div key={product.id} className="flex flex-col border border-[#e2e2ea] bg-[#f8f8fb] rounded-xl overflow-hidden h-[254px]">
+          <div key={product.id} className="flex flex-col border border-[#e2e2ea] bg-[#f8f8fb] rounded-xl overflow-hidden h-[300px]">
             {/* Card Content Area */}
             <div className="flex flex-col bg-white p-5 flex-1">
               {/* Card Header */}
@@ -103,7 +103,7 @@ export default async function ProductsPage(props: Props) {
                 <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-[#5b5bd6]/10 text-[#5b5bd6]">
                   <Package className="h-5 w-5" />
                 </div>
-                <Button variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground hover:bg-zinc-100 rounded-md -mt-1 -mr-2">
+                <Button variant="ghost" size="icon" className="flex items-center justify-center h-8 w-8 text-muted-foreground hover:bg-zinc-100 rounded-md -mt-1 -mr-2">
                   <MoreVertical className="h-4 w-4" />
                 </Button>
               </div>
@@ -116,16 +116,36 @@ export default async function ProductsPage(props: Props) {
 
               {/* Progress */}
               <div className="mb-4">
-                <div className="flex items-center justify-between text-[10px] text-muted-foreground mb-1.5">
-                  <span>Progress</span>
-                  <span>{product.status === 'completed' ? '13/13 modules' : product.status === 'draft' ? '5/13 modules' : '9/13 modules'}</span>
-                </div>
-                <div className="h-1.5 w-full bg-[#f1f1f5] rounded-full overflow-hidden">
-                  <div 
-                    className="h-full bg-[#5b5bd6] rounded-full" 
-                    style={{ width: product.status === 'completed' ? '100%' : product.status === 'draft' ? '30%' : '60%' }} 
-                  />
-                </div>
+                {(() => {
+                  const workflow = product.workflows?.[0];
+                  
+                  if (!workflow) {
+                    return (
+                      <div className="text-[11px] text-muted-foreground mt-4 mb-2 italic">
+                        Strategy not started yet
+                      </div>
+                    );
+                  }
+
+                  const totalJobs = workflow.jobs?.length || 0;
+                  const completedJobs = workflow.jobs?.filter((j: any) => j.status === 'completed').length || 0;
+                  const progressPercent = totalJobs > 0 ? (completedJobs / totalJobs) * 100 : 0;
+
+                  return (
+                    <>
+                      <div className="flex items-center justify-between text-[10px] text-muted-foreground mb-1.5">
+                        <span>Progress</span>
+                        <span>{completedJobs}/{totalJobs} modules</span>
+                      </div>
+                      <div className="h-1.5 w-full bg-[#f1f1f5] rounded-full overflow-hidden">
+                        <div 
+                          className="h-full bg-[#5b5bd6] rounded-full transition-all duration-500 ease-in-out" 
+                          style={{ width: `${progressPercent}%` }} 
+                        />
+                      </div>
+                    </>
+                  );
+                })()}
               </div>
 
               {/* Status footer */}
@@ -137,11 +157,15 @@ export default async function ProductsPage(props: Props) {
 
             {/* Card Actions Area */}
             <div className="flex gap-2 p-4 bg-[#f8f8fb] border-t border-[#e2e2ea]">
-              <Button variant="outline" className="flex-1 bg-white border-[#e2e2ea] hover:bg-zinc-50 text-xs h-8 shadow-sm text-zinc-950 font-medium">
-                Open Workspace
+              <Button asChild variant="outline" className="flex-1 bg-[#5b5bd6] border-[#e2e2ea] hover:bg-[#4a4ac0] text-xs h-8 shadow-sm text-white hover:text-white font-medium">
+                <Link href={`/products/${product.id}`} className='flex items-center justify-center'>
+                  Open Workspace
+                </Link>
               </Button>
-              <Button variant="outline" size="icon" className="h-8 w-8 bg-white border-[#e2e2ea] hover:bg-zinc-50 text-muted-foreground shadow-sm">
-                <ExternalLink className="h-3.5 w-3.5" />
+              <Button asChild variant="outline" size="icon" className=" flex items-center justify-center h-8 w-8 bg-white border-[#e2e2ea] hover:bg-zinc-50 text-muted-foreground shadow-sm">
+                <Link href={`/products/${product.id}`} target='_blank'>
+                  <ExternalLink className="h-3.5 w-3.5" />
+                </Link>
               </Button>
             </div>
           </div>

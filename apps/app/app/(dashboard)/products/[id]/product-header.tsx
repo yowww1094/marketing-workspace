@@ -33,12 +33,14 @@ export function ProductHeader({ product }: { product: any }) {
 
       <div className="flex items-center gap-3">
         {isDraft && (
-          <Button variant="outline" className="text-[#0c0c0e] border-[#e2e2ea]">
-            <Edit2 className="w-4 h-4 mr-2" />
-            Edit
+          <Button asChild variant="outline" className="flex items-center justify-center w-24 text-[#0c0c0e] border-[#e2e2ea] hover:bg-[#5b5bd6] hover:text-white">
+            <Link href={`/products/${product.id}/edit`}>
+              <Edit2 className="w-4 h-4 mr-2" />
+              Edit
+            </Link>
           </Button>
         )}
-        <Button variant="outline" className="text-[#0c0c0e] border-[#e2e2ea]" disabled={isDraft}>
+        <Button variant="outline" className="flex items-center justify-center w-24 text-[#0c0c0e] border-[#e2e2ea]" disabled={isDraft}>
           <Download className="w-4 h-4 mr-2" />
           Export Report
         </Button>

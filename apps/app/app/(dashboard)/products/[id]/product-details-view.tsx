@@ -41,8 +41,18 @@ export function ProductDetailsView({ product }: { product: any }) {
       </Section>
 
       <Section title="2. Images">
-        {/* We would render image_urls here if we saved them to DB. Currently the schema might not have image_urls or we save it to storage. */}
-        <p className="text-[14px] text-[#6e6e85]">Image functionality is pending storage integration.</p>
+        {product.image_urls && product.image_urls.length > 0 ? (
+          <div className="flex gap-4 flex-wrap mt-2">
+            {product.image_urls.map((url: string, i: number) => (
+              <div key={i} className="w-[120px] h-[120px] relative rounded-[8px] overflow-hidden border border-[#e2e2ea]">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img src={url} alt={`Product Image ${i + 1}`} className="w-full h-full object-cover" />
+              </div>
+            ))}
+          </div>
+        ) : (
+          <p className="text-[14px] text-[#6e6e85]">No images uploaded.</p>
+        )}
       </Section>
 
       <Section title="3. Brand Details">

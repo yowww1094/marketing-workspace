@@ -18,7 +18,7 @@ import { Step7Market } from './steps/step7-market';
 import { Step8Review } from './steps/step8-review';
 
 import { useRouter } from 'next/navigation';
-import { createProductAction } from './actions';
+import { createProductAction, updateProductAction } from './actions';
 
 const steps = [
   { id: 1, name: 'Business Info' },
@@ -31,14 +31,22 @@ const steps = [
   { id: 8, name: 'Review' },
 ];
 
-export function WizardClient({ userId }: { userId: string }) {
+export function WizardClient({ 
+  userId, 
+  productId,
+  initialData 
+}: { 
+  userId: string;
+  productId?: string;
+  initialData?: Partial<CreateProductInput>;
+}) {
   const router = useRouter();
   const [currentStep, setCurrentStep] = useState(1);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const methods = useForm<CreateProductInput>({
     resolver: zodResolver(CreateProductSchema) as any,
-    defaultValues: {
+    defaultValues: initialData || {
       name: '',
       category: '',
       description: '',
@@ -86,9 +94,17 @@ export function WizardClient({ userId }: { userId: string }) {
   const onSubmit = async (data: any) => {
     try {
       setIsSubmitting(true);
-      const productId = await createProductAction(data);
-      toast.success('Product saved as draft!');
-      router.push(`/products/${productId}`);
+      let updatedProductId = productId;
+      
+      if (productId) {
+        await updateProductAction(productId, data);
+        toast.success('Product updated successfully!');
+      } else {
+        updatedProductId = await createProductAction(data);
+        toast.success('Product saved as draft!');
+      }
+      
+      router.push(`/products/${updatedProductId}`);
     } catch (e: any) {
       toast.error(e.message || 'Failed to create product');
     } finally {
@@ -145,7 +161,18 @@ export function WizardClient({ userId }: { userId: string }) {
             {/* Navigation Buttons */}
             <div className="flex items-center justify-between w-full mt-6">
               <div className="flex items-center gap-2">
-                <Button type="button" variant="ghost" onClick={() => router.push('/products')} className="text-red-500 hover:text-red-500 hover:bg-zinc-100 transition-colors">
+                <Button 
+                  type="button" 
+                  variant="ghost" 
+                  onClick={() => {
+                    if (productId) {
+                      router.push(`/products/${productId}`);
+                    } else {
+                      router.push('/products');
+                    }
+                  }} 
+                  className="text-red-500 hover:text-red-500 hover:bg-zinc-100 transition-colors"
+                >
                   Cancel
                 </Button>
                 {currentStep > 1 && (
@@ -162,7 +189,7 @@ export function WizardClient({ userId }: { userId: string }) {
                 </Button>
               ) : (
                 <Button type="submit" disabled={isSubmitting} className="bg-[#5b5bd6] hover:bg-[#4a4ac0] text-white drop-shadow-sm h-[36px] rounded-[8px] px-4">
-                  {isSubmitting ? 'Saving...' : 'Save Product Details'}
+                  {isSubmitting ? 'Saving...' : (productId ? 'Update Product Details' : 'Save Product Details')}
                   {!isSubmitting && <ArrowRight className="w-4 h-4 ml-2" />}
                 </Button>
               )}

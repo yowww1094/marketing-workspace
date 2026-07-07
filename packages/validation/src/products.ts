@@ -13,7 +13,7 @@ export const CreateProductSchema = z.object({
   // Step 2: Images
   // For security and optimization, files are usually handled via FormData or uploaded client-side
   // first. We will track the resulting uploaded file URLs or paths here.
-  image_urls: z.array(z.string()).default([]),
+  image_urls: z.array(z.string()).max(3, 'Maximum 3 images allowed').default([]),
   
   // Step 3: Brand
   brand_name: z.string().optional(),

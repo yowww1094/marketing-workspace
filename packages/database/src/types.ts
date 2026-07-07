@@ -21,6 +21,7 @@ export interface Database {
           features: string[] | null
           unique_selling_points: string[] | null
           product_url: string | null
+          image_urls: string[] | null
           brand_name: string | null
           brand_story: string | null
           brand_voice: string | null

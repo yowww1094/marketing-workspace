@@ -2,11 +2,12 @@ import { createClient } from '@marketing-workspace/auth/server';
 import { notFound, redirect } from 'next/navigation';
 import { ProductWorkspaceClient } from './product-workspace-client';
 
-export default async function ProductWorkspacePage({
-  params,
-}: {
-  params: { id: string };
-}) {
+export default async function ProductWorkspacePage(
+  props: {
+    params: Promise<{ id: string }>;
+  }
+) {
+  const params = await props.params;
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
 
