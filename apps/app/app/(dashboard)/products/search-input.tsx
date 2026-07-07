@@ -12,6 +12,9 @@ export function SearchInput() {
   const [query, setQuery] = useState(searchParams.get('q') || '');
 
   useEffect(() => {
+    const currentQ = searchParams.get('q') || '';
+    if (query === currentQ) return;
+
     const handler = setTimeout(() => {
       const params = new URLSearchParams(searchParams.toString());
       if (query) {
