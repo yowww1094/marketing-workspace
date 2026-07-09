@@ -8,7 +8,7 @@ import { WorkspaceModules } from './workspace-modules';
 import { MarketingSummaryView } from './marketing-summary-view';
 import { StrategyGeneratingView } from './strategy-generating-view';
 
-export function ProductWorkspaceClient({ product, workflow }: { product: any; workflow: any }) {
+export function ProductWorkspaceClient({ product, workflow, isPro = false }: { product: any; workflow: any; isPro?: boolean }) {
   const router = useRouter();
   
   // Default to showing the full-screen generating view if it's processing
@@ -55,7 +55,7 @@ export function ProductWorkspaceClient({ product, workflow }: { product: any; wo
   if (product.status === 'completed' && showSummaryView) {
     return (
       <div className="flex flex-col w-[calc(100%+64px)] h-[calc(100vh-88px)] -m-8 bg-white">
-        <MarketingSummaryView product={product} workflow={workflow} />
+        <MarketingSummaryView product={product} workflow={workflow} isPro={isPro} />
       </div>
     );
   }

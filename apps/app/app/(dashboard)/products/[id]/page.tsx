@@ -36,5 +36,14 @@ export default async function ProductWorkspacePage(
     .limit(1)
     .single();
 
-  return <ProductWorkspaceClient product={product} workflow={workflow} />;
+  // Fetch subscription
+  const { data: subscription } = await supabase
+    .from('subscriptions')
+    .select('plan_id')
+    .eq('user_id', user.id)
+    .single();
+
+  const isPro = subscription?.plan_id === 'pro';
+
+  return <ProductWorkspaceClient product={product} workflow={workflow} isPro={isPro} />;
 }
