@@ -19,11 +19,13 @@ import {
 export function WorkspaceModules({ 
   product, 
   workflow,
-  onShowGeneratingView
+  onShowGeneratingView,
+  onShowSummary
 }: { 
   product: any; 
   workflow: any;
   onShowGeneratingView?: () => void;
+  onShowSummary?: () => void;
 }) {
   const router = useRouter();
   const [isGenerating, setIsGenerating] = useState(false);
@@ -188,7 +190,7 @@ export function WorkspaceModules({
 
       {product.status === 'completed' && (
         <div className="mt-6 pt-6 border-t border-[#e2e2ea]">
-          <Button variant="outline" className="w-full text-[#0c0c0e] border-[#e2e2ea]">
+          <Button variant="outline" className="w-full text-[#0c0c0e] border-[#e2e2ea]" onClick={onShowSummary}>
             View Marketing Summary
           </Button>
         </div>

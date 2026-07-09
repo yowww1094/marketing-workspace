@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { ProductHeader } from './product-header';
 import { ProductDetailsView } from './product-details-view';
 import { WorkspaceModules } from './workspace-modules';
+import { MarketingSummaryView } from './marketing-summary-view';
 import { StrategyGeneratingView } from './strategy-generating-view';
 
 export function ProductWorkspaceClient({ product, workflow }: { product: any; workflow: any }) {
@@ -12,6 +13,8 @@ export function ProductWorkspaceClient({ product, workflow }: { product: any; wo
   
   // Default to showing the full-screen generating view if it's processing
   const [showGeneratingView, setShowGeneratingView] = useState(product.status === 'processing');
+  // Default to false so user always lands on the detail page first
+  const [showSummaryView, setShowSummaryView] = useState(false);
   
   const hasFailedJobs = workflow?.jobs?.some((j: any) => j.status === 'failed') || false;
   const isProductProcessing = product.status === 'processing';
@@ -48,7 +51,16 @@ export function ProductWorkspaceClient({ product, workflow }: { product: any; wo
     );
   }
 
-  // Normal 2-column layout
+  // Final Dashboard when completed AND user wants to view it
+  if (product.status === 'completed' && showSummaryView) {
+    return (
+      <div className="flex flex-col w-[calc(100%+64px)] h-[calc(100vh-88px)] -m-8 bg-white">
+        <MarketingSummaryView product={product} workflow={workflow} />
+      </div>
+    );
+  }
+
+  // Normal 2-column layout (Draft mode, or viewing details before opening summary)
   return (
     <div className="flex flex-col w-full min-h-screen bg-[#f8f8fb] pt-[88px] pb-[32px] px-[32px]">
       <div className="w-full max-w-[1200px] mx-auto flex flex-col gap-6">
@@ -59,7 +71,12 @@ export function ProductWorkspaceClient({ product, workflow }: { product: any; wo
             <ProductDetailsView product={product} />
           </div>
           <div className="lg:col-span-1 flex flex-col gap-6">
-            <WorkspaceModules product={product} workflow={workflow} onShowGeneratingView={() => setShowGeneratingView(true)} />
+            <WorkspaceModules 
+              product={product} 
+              workflow={workflow} 
+              onShowGeneratingView={() => setShowGeneratingView(true)} 
+              onShowSummary={() => setShowSummaryView(true)}
+            />
           </div>
         </div>
       </div>
