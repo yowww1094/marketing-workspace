@@ -25,6 +25,8 @@ export function MarketingSummaryView({ product, workflow, isPro = false }: Marke
   const [activeSection, setActiveSection] = useState<SummarySection>('executive_summary');
   const [showUpgradeModal, setShowUpgradeModal] = useState(false);
 
+  const [isExporting, setIsExporting] = useState(false);
+
   const handleShare = () => {
     if (isPro) {
       navigator.clipboard.writeText(window.location.href);
@@ -34,9 +36,22 @@ export function MarketingSummaryView({ product, workflow, isPro = false }: Marke
     }
   };
 
-  const handleDownload = () => {
+  const handleDownload = async () => {
     if (isPro) {
-      window.print();
+      // Phase 1: Call action to save snapshot, then print
+      try {
+        setIsExporting(true);
+        const { exportReportAction } = await import('./actions');
+        await exportReportAction(product.id, product.name);
+        toast.success('Report saved to your Reports dashboard!');
+        // Keep window.print() so they still get the physical PDF right now
+        window.print();
+      } catch (error) {
+        toast.error('Failed to export report');
+        console.error(error);
+      } finally {
+        setIsExporting(false);
+      }
     } else {
       setShowUpgradeModal(true);
     }
@@ -97,9 +112,9 @@ export function MarketingSummaryView({ product, workflow, isPro = false }: Marke
                 <Share className="w-3.5 h-3.5" />
                 Share
               </Button>
-              <Button size="sm" className="h-8 gap-2 text-[12px] bg-[#5b5bd6] hover:bg-[#4a4ac0] text-white" onClick={handleDownload}>
+              <Button size="sm" className="h-8 gap-2 text-[12px] bg-[#5b5bd6] hover:bg-[#4a4ac0] text-white" onClick={handleDownload} disabled={isExporting}>
                 <Download className="w-3.5 h-3.5" />
-                Export
+                {isExporting ? 'Exporting...' : 'Export'}
               </Button>
             </div>
           </div>

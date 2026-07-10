@@ -108,3 +108,61 @@ export async function retryFailedJobsAction(productId: string, workflowId: strin
   
   revalidatePath(`/products/${productId}`);
 }
+
+export async function exportReportAction(productId: string, productName: string) {
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+
+  if (!user) {
+    throw new Error('Unauthorized');
+  }
+
+  // Verify product ownership
+  const { data: product, error } = await supabase
+    .from('products')
+    .select('id, name')
+    .eq('id', productId)
+    .eq('user_id', user.id)
+    .single();
+
+  if (error || !product) {
+    throw new Error('Product not found');
+  }
+
+  // Create a mock HTML/JSON snapshot file to upload
+  const fileContent = JSON.stringify({ message: "Exported Report Snapshot", productId });
+  const fileName = `${user.id}/${productId}/${Date.now()}_report.json`;
+  
+  // Upload to storage using the authenticated client
+  const { error: uploadError } = await supabase.storage
+    .from('reports')
+    .upload(fileName, fileContent, {
+      contentType: 'application/json',
+      upsert: true
+    });
+    
+  if (uploadError) {
+    console.error('Storage upload error:', uploadError);
+    throw new Error('Failed to upload report to storage');
+  }
+
+  // Insert into reports table
+  const { error: insertError } = await supabase
+    .from('reports')
+    .insert({
+      user_id: user.id,
+      product_id: productId,
+      name: `Workspace Report: ${productName}`,
+      type: 'Full Workspace',
+      size_bytes: fileContent.length,
+      storage_path: fileName
+    });
+
+  if (insertError) {
+    console.error('Database insert error:', insertError);
+    throw new Error('Failed to save report record');
+  }
+
+  revalidatePath('/reports');
+  return { success: true };
+}

@@ -63,6 +63,21 @@ export interface Database {
         Insert: Omit<Database['public']['Tables']['workflows']['Row'], 'id' | 'created_at' | 'updated_at'>
         Update: Partial<Database['public']['Tables']['workflows']['Insert']>
       }
+      reports: {
+        Row: {
+          id: string
+          user_id: string
+          product_id: string
+          name: string
+          type: string
+          size_bytes: number
+          storage_path: string
+          created_at: string
+          updated_at: string
+        }
+        Insert: Omit<Database['public']['Tables']['reports']['Row'], 'id' | 'created_at' | 'updated_at'>
+        Update: Partial<Database['public']['Tables']['reports']['Insert']>
+      }
       jobs: {
         Row: {
           id: string
