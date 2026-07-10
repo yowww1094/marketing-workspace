@@ -69,12 +69,17 @@ export default function PrivacyPage() {
             Depending on your location, you may have the right to access, correct, or delete your personal data. You can manage your account information directly from your Settings or by contacting us.
           </p>
 
-          <h2 className="text-[24px] font-bold text-[#0c0c0e] mt-10 mb-4">7. Changes to This Policy</h2>
+          <h2 className="text-[24px] font-bold text-[#0c0c0e] mt-10 mb-4">7. Refund Policy</h2>
+          <p>
+            Because your first product generation is entirely free, adding a second product and generating its strategy constitutes full use of our Pro tier capabilities. Therefore, <strong>no refunds will be granted after your second product strategy is generated</strong>.
+          </p>
+
+          <h2 className="text-[24px] font-bold text-[#0c0c0e] mt-10 mb-4">8. Changes to This Policy</h2>
           <p>
             We may update our Privacy Policy from time to time. We will notify you of any changes by posting the new Privacy Policy on this page and updating the "Last updated" date.
           </p>
 
-          <h2 className="text-[24px] font-bold text-[#0c0c0e] mt-10 mb-4">8. Contact Us</h2>
+          <h2 className="text-[24px] font-bold text-[#0c0c0e] mt-10 mb-4">9. Contact Us</h2>
           <p>
             If you have any questions about this Privacy Policy, please contact us at <a href="mailto:privacy@marketingworkspace.com">privacy@marketingworkspace.com</a>.
           </p>

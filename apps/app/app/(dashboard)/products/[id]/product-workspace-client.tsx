@@ -64,7 +64,7 @@ export function ProductWorkspaceClient({ product, workflow, isPro = false }: { p
   return (
     <div className="flex flex-col w-full min-h-screen bg-[#f8f8fb] pt-[88px] pb-[32px] px-[32px]">
       <div className="w-full max-w-[1200px] mx-auto flex flex-col gap-6">
-        <ProductHeader product={product} />
+        <ProductHeader product={product} isPro={isPro} />
         
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           <div className="lg:col-span-2 flex flex-col gap-6">

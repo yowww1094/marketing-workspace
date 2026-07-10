@@ -40,8 +40,8 @@ export class ProductRepository {
    * Create a new immutable product
    */
   async createProduct(product: ProductInsert): Promise<ProductRow> {
-    const { data, error } = await this.client
-      .from('products')
+    const { data, error } = await (this.client
+      .from('products') as any)
       .insert(product)
       .select()
       .single();
@@ -58,8 +58,8 @@ export class ProductRepository {
     id: string,
     updates: Partial<Pick<ProductRow, 'status' | 'ai_product_analysis' | 'ai_market_research' | 'ai_competitor_analysis' | 'ai_customer_personas' | 'ai_positioning' | 'ai_value_proposition' | 'ai_marketing_strategy' | 'ai_seo_strategy'>>
   ): Promise<ProductRow> {
-    const { data, error } = await this.client
-      .from('products')
+    const { data, error } = await (this.client
+      .from('products') as any)
       .update(updates)
       .eq('id', id)
       .select()

@@ -47,7 +47,7 @@ export default function TermsPage() {
             <li>It cannot be deleted (this ensures reproducible AI outputs and prevents subscription abuse).</li>
           </ul>
 
-          <h2 className="text-[24px] font-bold text-[#0c0c0e] mt-10 mb-4">3. Subscriptions and Billing</h2>
+          <h2 className="text-[24px] font-bold text-[#0c0c0e] mt-10 mb-4">3. Subscriptions, Billing, and Refund Policy</h2>
           <p>
             Marketing Workspace is offered on various subscription plans:
           </p>
@@ -57,7 +57,10 @@ export default function TermsPage() {
             <li><strong>Enterprise:</strong> Unlimited scale and custom AI capabilities.</li>
           </ul>
           <p>
-            Products count toward your monthly quota even if archived. Subscriptions are billed in advance on a monthly or annual basis and are non-refundable.
+            Products count toward your monthly quota even if archived. Subscriptions are billed in advance on a monthly or annual basis.
+          </p>
+          <p>
+            <strong>Refund Policy:</strong> Because your first product generation is entirely free, adding a second product and generating its strategy constitutes full use of our Pro tier capabilities. Therefore, <strong>no refunds will be granted after your second product strategy is generated</strong>.
           </p>
 
           <h2 className="text-[24px] font-bold text-[#0c0c0e] mt-10 mb-4">4. User Accounts</h2>

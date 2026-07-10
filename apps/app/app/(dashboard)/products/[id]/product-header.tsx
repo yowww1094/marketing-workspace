@@ -1,13 +1,42 @@
 'use client';
 
 import { Button } from '@marketing-workspace/ui/components/ui/button';
-import { Download, Edit2, ChevronDown, ChevronRight } from 'lucide-react';
+import { Download, Edit2, ChevronRight } from 'lucide-react';
 import Link from 'next/link';
+import { useState } from 'react';
+import { UpgradeModal } from '../../../../components/upgrade-modal';
+import { toast } from 'sonner';
 
-export function ProductHeader({ product }: { product: any }) {
+export function ProductHeader({ product, isPro = false }: { product: any, isPro?: boolean }) {
   const isDraft = product.status === 'draft';
+  const [showUpgradeModal, setShowUpgradeModal] = useState(false);
+  const [isExporting, setIsExporting] = useState(false);
+  
+  const handleDownload = async () => {
+    if (isPro) {
+      if (product.status !== 'completed') {
+        toast.error('Product must be completed to export report.');
+        return;
+      }
+      try {
+        setIsExporting(true);
+        const { exportReportAction } = await import('./actions');
+        await exportReportAction(product.id, product.name);
+        toast.success('Report saved to your Reports dashboard!');
+        window.print();
+      } catch (error) {
+        toast.error('Failed to export report');
+        console.error(error);
+      } finally {
+        setIsExporting(false);
+      }
+    } else {
+      setShowUpgradeModal(true);
+    }
+  };
   
   return (
+    <>
     <div className="flex items-center justify-between w-full">
       <div className="flex flex-col gap-1">
         <div className="flex items-center gap-2 text-[14px] text-[#6e6e85] mb-1">
@@ -40,11 +69,21 @@ export function ProductHeader({ product }: { product: any }) {
             </Link>
           </Button>
         )}
-        <Button variant="outline" className="flex items-center justify-center w-24 text-[#0c0c0e] border-[#e2e2ea]" disabled={isDraft}>
+        <Button 
+          variant="outline" 
+          className="flex items-center justify-center w-32 text-[#0c0c0e] border-[#e2e2ea]" 
+          disabled={isDraft || isExporting}
+          onClick={handleDownload}
+        >
           <Download className="w-4 h-4 mr-2" />
-          Export Report
+          {isExporting ? 'Exporting...' : 'Export Report'}
         </Button>
       </div>
     </div>
+    <UpgradeModal 
+      open={showUpgradeModal} 
+      onOpenChange={setShowUpgradeModal} 
+    />
+    </>
   );
 }

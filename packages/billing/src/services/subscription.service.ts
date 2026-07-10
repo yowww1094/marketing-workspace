@@ -99,4 +99,23 @@ export class SubscriptionService {
 
     return session;
   }
+
+  /**
+   * Create a Stripe Customer Portal Session for managing subscriptions.
+   */
+  static async createPortalSession(userId: string, returnUrl: string) {
+    const db = getDb();
+    const { data: sub } = await db.from('subscriptions').select('stripe_customer_id').eq('user_id', userId).single();
+
+    if (!sub?.stripe_customer_id) {
+      throw new Error('No Stripe customer found for this user.');
+    }
+
+    const portalSession = await stripe.billingPortal.sessions.create({
+      customer: sub.stripe_customer_id,
+      return_url: returnUrl,
+    });
+
+    return portalSession;
+  }
 }
