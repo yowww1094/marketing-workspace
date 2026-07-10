@@ -20,7 +20,7 @@ export default function RegisterPage() {
   return (
     <div className="flex flex-col min-h-screen bg-white">
       <header className="flex h-14 items-center border-b border-border px-6">
-        <Link href={process.env.NEXT_PUBLIC_MARKETING_URL || "http://localhost:3000"} className="flex items-center gap-2 font-semibold text-sm">
+        <a href={process.env.NEXT_PUBLIC_MARKETING_URL || "http://localhost:3000"} className="flex items-center gap-2 font-semibold text-sm">
           <div className="flex h-6 w-6 items-center justify-center rounded-md bg-zinc-950 text-white">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-3 w-3">
               <path d="M12 2L2 7l10 5 10-5-10-5z" />
@@ -29,7 +29,7 @@ export default function RegisterPage() {
             </svg>
           </div>
           Marketing Workspace
-        </Link>
+        </a>
       </header>
 
       <main className="flex flex-1 flex-col items-center justify-center px-6 py-16">
