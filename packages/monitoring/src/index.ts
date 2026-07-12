@@ -1,2 +1,1 @@
-// @marketing-workspace/monitoring
-export {};
+export * from './logger';

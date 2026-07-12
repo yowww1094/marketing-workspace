@@ -66,10 +66,7 @@ export class SubscriptionService {
     }
   }
 
-  /**
-   * Create a Stripe Checkout Session for upgrading.
-   */
-  static async createCheckoutSession(userId: string, email: string, returnUrl: string) {
+  static async createCheckoutSession(userId: string, email: string, returnUrl: string): Promise<{ url: string | null }> {
     // In a real app, we'd lookup the price ID from env or a constants file
     const priceId = process.env.STRIPE_PRO_PRICE_ID; 
 
@@ -97,13 +94,13 @@ export class SubscriptionService {
       client_reference_id: userId,
     });
 
-    return session;
+    return { url: session.url };
   }
 
   /**
    * Create a Stripe Customer Portal Session for managing subscriptions.
    */
-  static async createPortalSession(userId: string, returnUrl: string) {
+  static async createPortalSession(userId: string, returnUrl: string): Promise<{ url: string | null }> {
     const db = getDb();
     const { data: sub } = await db.from('subscriptions').select('stripe_customer_id').eq('user_id', userId).single();
 
@@ -116,6 +113,6 @@ export class SubscriptionService {
       return_url: returnUrl,
     });
 
-    return portalSession;
+    return { url: portalSession.url };
   }
 }

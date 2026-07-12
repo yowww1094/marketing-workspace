@@ -66,9 +66,15 @@ importers:
       '@marketing-workspace/billing':
         specifier: workspace:*
         version: link:../../packages/billing
+      '@marketing-workspace/database':
+        specifier: workspace:*
+        version: link:../../packages/database
       '@marketing-workspace/design-system':
         specifier: workspace:*
         version: link:../../packages/design-system
+      '@marketing-workspace/monitoring':
+        specifier: workspace:*
+        version: link:../../packages/monitoring
       '@marketing-workspace/ui':
         specifier: workspace:*
         version: link:../../packages/ui
@@ -124,9 +130,18 @@ importers:
 
   apps/marketing:
     dependencies:
+      '@marketing-workspace/auth':
+        specifier: workspace:*
+        version: link:../../packages/auth
+      '@marketing-workspace/database':
+        specifier: workspace:*
+        version: link:../../packages/database
       '@marketing-workspace/design-system':
         specifier: workspace:*
         version: link:../../packages/design-system
+      '@marketing-workspace/monitoring':
+        specifier: workspace:*
+        version: link:../../packages/monitoring
       '@marketing-workspace/ui':
         specifier: workspace:*
         version: link:../../packages/ui
@@ -145,6 +160,9 @@ importers:
       react-dom:
         specifier: ^19.2.0
         version: 19.2.0(react@19.2.0)
+      sonner:
+        specifier: ^2.0.7
+        version: 2.0.7(react-dom@19.2.0(react@19.2.0))(react@19.2.0)
       tailwindcss:
         specifier: ^4.0.0
         version: 4.3.2

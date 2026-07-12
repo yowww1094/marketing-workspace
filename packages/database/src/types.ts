@@ -91,6 +91,20 @@ type SubscriptionRow = {
   updated_at: string
 }
 
+type SystemLogRow = {
+  id: string
+  level: 'info' | 'warn' | 'error' | 'fatal'
+  message: string
+  stack_trace: string | null
+  url: string | null
+  method: string | null
+  user_id: string | null
+  browser: string | null
+  client_ip: string | null
+  metadata: Json | null
+  created_at: string
+}
+
 type ProductInsert = Omit<ProductRow, 'id' | 'created_at' | 'updated_at'>
 type ProductUpdate = Partial<ProductInsert>
 
@@ -105,6 +119,9 @@ type JobUpdate = Partial<JobInsert>
 
 type SubscriptionInsert = Omit<SubscriptionRow, 'id' | 'created_at' | 'updated_at'>
 type SubscriptionUpdate = Partial<SubscriptionInsert>
+
+type SystemLogInsert = Omit<SystemLogRow, 'id' | 'created_at'>
+type SystemLogUpdate = Partial<SystemLogInsert>
 
 export interface Database {
   public: {
@@ -133,6 +150,11 @@ export interface Database {
         Row: SubscriptionRow
         Insert: SubscriptionInsert
         Update: SubscriptionUpdate
+      }
+      system_logs: {
+        Row: SystemLogRow
+        Insert: SystemLogInsert
+        Update: SystemLogUpdate
       }
     }
     Views: {

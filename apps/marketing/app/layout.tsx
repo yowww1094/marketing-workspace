@@ -4,6 +4,7 @@ import "./globals.css";
 import { TooltipProvider } from "@marketing-workspace/ui/components/ui/tooltip";
 import { MarketingHeader } from "../components/marketing-header";
 import { MarketingFooter } from "../components/marketing-footer";
+import { Toaster } from "@marketing-workspace/ui/components/ui/sonner";
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -34,6 +35,7 @@ export default function RootLayout({
           </main>
           <MarketingFooter />
         </TooltipProvider>
+        <Toaster />
       </body>
     </html>
   );
