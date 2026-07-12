@@ -1,6 +1,10 @@
 {
   "extends": "@marketing-workspace/config/typescript/nextjs.json",
   "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["./*"]
+    },
     "plugins": [
       {
         "name": "next"

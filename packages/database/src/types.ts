@@ -105,6 +105,14 @@ type SystemLogRow = {
   created_at: string
 }
 
+type AdminUserRow = {
+  id: string
+  user_id: string
+  role: 'admin' | 'super_admin'
+  created_at: string
+  updated_at: string
+}
+
 type ProductInsert = Omit<ProductRow, 'id' | 'created_at' | 'updated_at'>
 type ProductUpdate = Partial<ProductInsert>
 
@@ -122,6 +130,9 @@ type SubscriptionUpdate = Partial<SubscriptionInsert>
 
 type SystemLogInsert = Omit<SystemLogRow, 'id' | 'created_at'>
 type SystemLogUpdate = Partial<SystemLogInsert>
+
+type AdminUserInsert = Omit<AdminUserRow, 'id' | 'created_at' | 'updated_at'>
+type AdminUserUpdate = Partial<AdminUserInsert>
 
 export interface Database {
   public: {
@@ -156,6 +167,11 @@ export interface Database {
         Insert: SystemLogInsert
         Update: SystemLogUpdate
       }
+      admin_users: {
+        Row: AdminUserRow
+        Insert: AdminUserInsert
+        Update: AdminUserUpdate
+      }
     }
     Views: {
       [_ in never]: never
@@ -167,6 +183,7 @@ export interface Database {
       product_status: 'draft' | 'processing' | 'completed' | 'failed'
       workflow_status: 'pending' | 'running' | 'completed' | 'failed'
       job_status: 'pending' | 'running' | 'completed' | 'failed'
+      admin_role: 'admin' | 'super_admin'
     }
   }
 }

@@ -61,3 +61,85 @@ export async function updateSession(request: NextRequest, isProtectedRoute: bool
 
   return supabaseResponse;
 }
+
+export async function updateAdminSession(request: NextRequest) {
+  let supabaseResponse = NextResponse.next({
+    request,
+  });
+
+  const supabase = createServerClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+    {
+      cookies: {
+        getAll() {
+          return request.cookies.getAll();
+        },
+        setAll(cookiesToSet) {
+          cookiesToSet.forEach(({ name, value, options }) => request.cookies.set(name, value));
+          supabaseResponse = NextResponse.next({
+            request,
+          });
+          cookiesToSet.forEach(({ name, value, options }) =>
+            supabaseResponse.cookies.set(name, value, options)
+          );
+        },
+      },
+    }
+  );
+
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  const isAuthPage = request.nextUrl.pathname.startsWith('/login');
+
+  if (!user) {
+    if (!isAuthPage && !request.nextUrl.pathname.startsWith('/auth')) {
+      const url = request.nextUrl.clone();
+      url.pathname = '/login';
+      const redirectResponse = NextResponse.redirect(url);
+      
+      supabaseResponse.cookies.getAll().forEach((cookie) => {
+        redirectResponse.cookies.set(cookie.name, cookie.value, cookie);
+      });
+      return redirectResponse;
+    }
+    return supabaseResponse;
+  }
+
+  // User is authenticated, check admin status
+  const { data: adminUser } = await supabase
+    .from('admin_users')
+    .select('role')
+    .eq('user_id', user.id)
+    .single();
+
+  if (!adminUser) {
+    // Not an admin. Log them out or send them to an unauthorized page.
+    // Let's redirect to a non-existent /unauthorized or just delete their session cookie?
+    // Easiest is to redirect to login with an error query param
+    const url = request.nextUrl.clone();
+    url.pathname = '/login';
+    url.searchParams.set('error', 'unauthorized');
+    
+    // Clear auth cookies from the request
+    const redirectResponse = NextResponse.redirect(url);
+    redirectResponse.cookies.delete('sb-' + new URL(process.env.NEXT_PUBLIC_SUPABASE_URL!).hostname.split('.')[0] + '-auth-token');
+    
+    return redirectResponse;
+  }
+
+  // Admin user is logged in
+  if (isAuthPage) {
+    const url = request.nextUrl.clone();
+    url.pathname = '/';
+    const redirectResponse = NextResponse.redirect(url);
+    supabaseResponse.cookies.getAll().forEach((cookie) => {
+      redirectResponse.cookies.set(cookie.name, cookie.value, cookie);
+    });
+    return redirectResponse;
+  }
+
+  return supabaseResponse;
+}

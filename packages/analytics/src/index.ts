@@ -1,2 +1,1 @@
-// @marketing-workspace/analytics
-export {};
+export * from './mixpanel';

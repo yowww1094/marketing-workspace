@@ -11,10 +11,14 @@
     "check-types": "next typegen && tsc --noEmit"
   },
   "dependencies": {
+    "@marketing-workspace/auth": "workspace:^",
     "@marketing-workspace/ui": "workspace:*",
+    "lucide-react": "^0.470.0",
     "next": "16.2.0",
     "react": "^19.2.0",
-    "react-dom": "^19.2.0"
+    "react-dom": "^19.2.0",
+    "recharts": "^3.9.2",
+    "sonner": "^2.0.7"
   },
   "devDependencies": {
     "@marketing-workspace/config": "workspace:*",
