@@ -5,11 +5,22 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@mark
 import { Button } from '@marketing-workspace/ui/components/ui/button';
 import { 
   Users, Activity, FolderGit2, Sparkles, 
-  CheckCircle2, XCircle, DollarSign, Terminal, 
+  CheckCircle2, XCircle, DollarSign, Package, 
   Clock, ListTree, Database, RefreshCw 
 } from 'lucide-react';
+import { getDashboardMetrics, getSystemHealth } from '@/lib/metrics';
 
-export default function AdminDashboardPage() {
+export default async function AdminDashboardPage() {
+  const metrics = await getDashboardMetrics();
+  const health = await getSystemHealth();
+
+  const healthServices = [
+    { name: 'Database (Supabase)', ...health.database },
+    { name: 'Cache (Redis)', ...health.cache },
+    { name: 'Stripe API', ...health.stripe },
+    { name: 'AI Orchestrator', ...health.aiOrchestrator },
+  ];
+
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
@@ -23,103 +34,82 @@ export default function AdminDashboardPage() {
         </Button>
       </div>
 
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+      <div className="grid gap-4 md:grid-cols-3 lg:grid-cols-6">
+        {/* Row 1: Business & Usage */}
         <AdminKpi
           title="Total Users"
-          value="12,493"
+          value={metrics.totalUsers.toLocaleString()}
           icon={<Users />}
-          trend={{ value: "1,234", isPositive: true }}
+          trend={{ value: "Live", isPositive: true }}
         />
         <AdminKpi
-          title="Active Today"
-          value="2,834"
-          icon={<Activity />}
-          trend={{ value: "12%", isPositive: true, label: "vs yesterday" }}
-        />
-        <AdminKpi
-          title="Projects Created"
-          value="45,231"
-          icon={<FolderGit2 />}
-          trend={{ value: "3,400", isPositive: true }}
+          title="Pro Subscribers"
+          value={metrics.proSubscribers.toLocaleString()}
+          icon={<DollarSign />}
+          trend={{ value: "Live", isPositive: true }}
         />
         <AdminKpi
           title="MRR"
-          value="$124,500"
-          icon={<DollarSign />}
-          trend={{ value: "$12,400", isPositive: true }}
-        />
-        
-        <AdminKpi
-          title="AI Generations"
-          value="1.2M"
-          icon={<Sparkles />}
-          trend={{ value: "150k", isPositive: true }}
+          value={`$${metrics.mrr.toLocaleString()}`}
+          icon={<Activity />}
+          trend={{ value: "Live", isPositive: true }}
         />
         <AdminKpi
-          title="Success Rate"
-          value="99.8%"
-          icon={<CheckCircle2 />}
-          trend={{ value: "0.1%", isPositive: true }}
+          title="Total Products"
+          value={metrics.totalProducts.toLocaleString()}
+          icon={<Package />}
+          trend={{ value: "Live", isPositive: true }}
         />
         <AdminKpi
-          title="Failed Gens"
-          value="2,401"
-          icon={<XCircle />}
-          trend={{ value: "120", isPositive: false }}
+          title="Products (30d)"
+          value={metrics.products30d.toLocaleString()}
+          icon={<FolderGit2 />}
+          trend={{ value: "Live", isPositive: true }}
         />
         <AdminKpi
-          title="Est. AI Cost"
-          value="$4,250"
-          icon={<Database />}
-          trend={{ value: "$450", isPositive: false }}
+          title="Active Workflows"
+          value={metrics.activeWorkflows.toLocaleString()}
+          icon={<RefreshCw />}
+          trend={{ value: "Live", isPositive: true }}
         />
 
+        {/* Row 2: AI & Performance */}
         <AdminKpi
-          title="API Calls"
-          value="8.4M"
-          icon={<Terminal />}
-          trend={{ value: "1.2M", isPositive: true }}
+          title="Total AI Jobs"
+          value={metrics.totalJobs.toLocaleString()}
+          icon={<Sparkles />}
+          trend={{ value: "Live", isPositive: true }}
         />
         <AdminKpi
-          title="Avg Response"
-          value="240ms"
+          title="Job Success Rate"
+          value={metrics.successRate}
+          icon={<CheckCircle2 />}
+          trend={{ value: "Live", isPositive: true }}
+        />
+        <AdminKpi
+          title="Failed Jobs"
+          value={metrics.failedJobs.toLocaleString()}
+          icon={<XCircle />}
+          trend={{ value: "Live", isPositive: false }}
+        />
+        <AdminKpi
+          title="Avg Processing"
+          value={metrics.avgProcessingStr}
           icon={<Clock />}
-          trend={{ value: "12ms", isPositive: true }}
+          trend={{ value: "Live", isPositive: true }}
         />
         <AdminKpi
           title="Queue Depth"
-          value="12"
+          value={metrics.queueDepth.toLocaleString()}
           icon={<ListTree />}
-          trend={{ value: "4", isPositive: false, label: "vs 1 hour ago" }}
+          trend={{ value: "Live", isPositive: true }}
         />
         <AdminKpi
-          title="Token Usage"
-          value="4.2B"
+          title="Est. AI Cost"
+          value={`$${metrics.totalCost.toFixed(2)}`}
           icon={<Database />}
-          trend={{ value: "800M", isPositive: true }}
+          trend={{ value: "Live", isPositive: false }}
         />
-      </div>
-
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-7">
-        <Card className="col-span-4 shadow-sm border-zinc-200">
-          <CardHeader>
-            <CardTitle>User Growth</CardTitle>
-            <CardDescription>Monthly active users over time.</CardDescription>
-          </CardHeader>
-          <CardContent className="pl-2">
-            <UserGrowthChart />
-          </CardContent>
-        </Card>
-        
-        <Card className="col-span-3 shadow-sm border-zinc-200">
-          <CardHeader>
-            <CardTitle>AI Generations</CardTitle>
-            <CardDescription>Success vs Failed tasks.</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <AIGenerationsChart />
-          </CardContent>
-        </Card>
       </div>
 
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
@@ -130,23 +120,40 @@ export default function AdminDashboardPage() {
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
-              {[
-                { name: 'OpenAI API', status: 'Operational', latency: '120ms' },
-                { name: 'Anthropic API', status: 'Operational', latency: '85ms' },
-                { name: 'Vercel Deployment', status: 'Operational', latency: '45ms' },
-                { name: 'Supabase Database', status: 'Operational', latency: '12ms' },
-              ].map((service) => (
-                <div key={service.name} className="flex items-center justify-between border-b border-zinc-100 pb-4 last:border-0 last:pb-0">
-                  <div className="flex items-center gap-3">
-                    <div className="h-2 w-2 rounded-full bg-emerald-500" />
-                    <span className="font-medium text-sm">{service.name}</span>
+              {healthServices.map((service) => {
+                const getStatusColor = (status: string) => {
+                  switch (status) {
+                    case 'Operational': return 'bg-emerald-500';
+                    case 'Degraded': return 'bg-yellow-500';
+                    case 'Offline': return 'bg-red-500';
+                    default: return 'bg-zinc-300'; // Not Configured
+                  }
+                };
+                
+                const getBadgeColor = (status: string) => {
+                  switch (status) {
+                    case 'Operational': return 'text-emerald-600 bg-emerald-50';
+                    case 'Degraded': return 'text-yellow-600 bg-yellow-50';
+                    case 'Offline': return 'text-red-600 bg-red-50';
+                    default: return 'text-zinc-600 bg-zinc-100'; // Not Configured
+                  }
+                };
+
+                return (
+                  <div key={service.name} className="flex items-center justify-between border-b border-zinc-100 pb-4 last:border-0 last:pb-0">
+                    <div className="flex items-center gap-3">
+                      <div className={`h-2 w-2 rounded-full ${getStatusColor(service.status)}`} />
+                      <span className="font-medium text-sm">{service.name}</span>
+                    </div>
+                    <div className="flex items-center gap-4 text-sm text-zinc-500">
+                      <span>{service.latency}</span>
+                      <span className={`px-2 py-0.5 rounded-md text-xs font-medium ${getBadgeColor(service.status)}`}>
+                        {service.status}
+                      </span>
+                    </div>
                   </div>
-                  <div className="flex items-center gap-4 text-sm text-zinc-500">
-                    <span>{service.latency}</span>
-                    <span className="text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-md text-xs font-medium">{service.status}</span>
-                  </div>
-                </div>
-              ))}
+                );
+              })}
             </div>
           </CardContent>
         </Card>
@@ -173,6 +180,28 @@ export default function AdminDashboardPage() {
                 </div>
               ))}
             </div>
+          </CardContent>
+        </Card>
+      </div>
+
+      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-7">
+        <Card className="col-span-4 shadow-sm border-zinc-200">
+          <CardHeader>
+            <CardTitle>User Growth</CardTitle>
+            <CardDescription>Monthly active users over time.</CardDescription>
+          </CardHeader>
+          <CardContent className="pl-2">
+            <UserGrowthChart />
+          </CardContent>
+        </Card>
+        
+        <Card className="col-span-3 shadow-sm border-zinc-200">
+          <CardHeader>
+            <CardTitle>AI Generations</CardTitle>
+            <CardDescription>Success vs Failed tasks.</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <AIGenerationsChart />
           </CardContent>
         </Card>
       </div>

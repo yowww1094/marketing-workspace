@@ -5,36 +5,28 @@ import { usePathname } from 'next/navigation';
 import { cn } from '@marketing-workspace/ui/utils';
 import {
   LayoutDashboard,
+  Users,
   Package,
-  FileText,
   Settings,
   LogOut,
-  HelpCircle,
-  BookOpen,
-  CreditCard
 } from 'lucide-react';
 import { logout } from '@/app/auth/actions';
 
 const routes = [
   {
-    label: 'Overview',
+    label: 'Dashboard',
     icon: LayoutDashboard,
     href: '/',
+  },
+  {
+    label: 'Users',
+    icon: Users,
+    href: '/users',
   },
   {
     label: 'Products',
     icon: Package,
     href: '/products',
-  },
-  {
-    label: 'Reports',
-    icon: FileText,
-    href: '/reports',
-  },
-  {
-    label: 'Billing',
-    icon: CreditCard,
-    href: '/billing',
   },
   {
     label: 'Settings',
@@ -50,13 +42,9 @@ export function Sidebar() {
     <div className="flex h-full w-[252px] flex-col border-r border-border bg-white px-4 py-6 fixed left-0 top-0 bottom-0 z-10">
       <Link href="/" className="flex items-center gap-3 px-2 mb-10">
         <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-zinc-950 text-white shadow-sm">
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="h-4 w-4">
-            <path d="M12 2L2 7l10 5 10-5-10-5z" />
-            <path d="M2 17l10 5 10-5" />
-            <path d="M2 12l10 5 10-5" />
-          </svg>
+          <LayoutDashboard className="h-4 w-4" />
         </div>
-        <span className="font-semibold text-sm tracking-tight">Marketing Workspace</span>
+        <span className="font-semibold text-sm tracking-tight">Admin OS</span>
       </Link>
 
       <div className="flex-1 space-y-1">
@@ -81,21 +69,7 @@ export function Sidebar() {
       </div>
 
       <div className="mt-auto space-y-1 pt-4 border-t border-border">
-        <Link
-          href="/help"
-          className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-muted-foreground hover:bg-zinc-50 hover:text-zinc-950 transition-all"
-        >
-          <HelpCircle className="h-4 w-4" />
-          Help & Support
-        </Link>
-        <Link
-          href="/docs"
-          className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-muted-foreground hover:bg-zinc-50 hover:text-zinc-950 transition-all"
-        >
-          <BookOpen className="h-4 w-4" />
-          Documentation
-        </Link>
-        <form action={logout} className="mt-2">
+        <form action={logout}>
           <button
             type="submit"
             className="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-red-600 hover:bg-red-50 hover:text-red-700 transition-all"

@@ -116,16 +116,24 @@ export async function updateAdminSession(request: NextRequest) {
     .single();
 
   if (!adminUser) {
-    // Not an admin. Log them out or send them to an unauthorized page.
-    // Let's redirect to a non-existent /unauthorized or just delete their session cookie?
-    // Easiest is to redirect to login with an error query param
+    // Not an admin. Sign them out so their cookies are cleared properly.
+    await supabase.auth.signOut();
+
+    // If they are already on the login page with the unauthorized error, don't redirect again (prevents infinite loop)
+    if (isAuthPage && request.nextUrl.searchParams.get('error') === 'unauthorized') {
+      return supabaseResponse;
+    }
+
     const url = request.nextUrl.clone();
     url.pathname = '/login';
     url.searchParams.set('error', 'unauthorized');
     
-    // Clear auth cookies from the request
     const redirectResponse = NextResponse.redirect(url);
-    redirectResponse.cookies.delete('sb-' + new URL(process.env.NEXT_PUBLIC_SUPABASE_URL!).hostname.split('.')[0] + '-auth-token');
+    
+    // Pass the cleared cookies to the redirect response
+    supabaseResponse.cookies.getAll().forEach((cookie) => {
+      redirectResponse.cookies.set(cookie.name, cookie.value, cookie);
+    });
     
     return redirectResponse;
   }
