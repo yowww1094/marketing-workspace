@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import { toast } from 'sonner';
 import { reportErrorAction } from './actions/report-error';
 import { Button } from '@marketing-workspace/ui/components/ui/button';
@@ -13,7 +13,12 @@ export default function ErrorBoundary({
   error: Error & { digest?: string };
   reset: () => void;
 }) {
+  const hasReported = useRef(false);
+
   useEffect(() => {
+    if (hasReported.current) return;
+    hasReported.current = true;
+
     toast.error('Something went wrong. Our team has been notified.');
     reportErrorAction({ message: error.message, stack: error.stack }, 'error');
   }, [error]);

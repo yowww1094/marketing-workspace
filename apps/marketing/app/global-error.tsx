@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import { reportErrorAction } from './actions/report-error';
 
 export default function GlobalError({
@@ -10,7 +10,12 @@ export default function GlobalError({
   error: Error & { digest?: string };
   reset: () => void;
 }) {
+  const hasReported = useRef(false);
+
   useEffect(() => {
+    if (hasReported.current) return;
+    hasReported.current = true;
+
     reportErrorAction({ message: error.message, stack: error.stack }, 'fatal');
   }, [error]);
 
