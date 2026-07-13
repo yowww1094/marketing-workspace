@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { 
   Table, 
@@ -15,7 +15,7 @@ import { Button } from '@marketing-workspace/ui/components/ui/button';
 import { Badge } from '@marketing-workspace/ui/components/ui/badge';
 import { Search, Eye, ChevronLeft, ChevronRight } from 'lucide-react';
 import { AdminUserView } from '@/lib/users';
-import { UserDetailsSheet } from './user-details-sheet';
+import { UserDetailsDialog } from './user-details-dialog';
 
 interface UsersTableProps {
   users: AdminUserView[];
@@ -32,10 +32,17 @@ export function UsersTable({ users, total, currentPage, searchQuery }: UsersTabl
   const perPage = 10;
   const totalPages = Math.ceil(total / perPage);
 
-  const handleSearch = (e: React.FormEvent) => {
-    e.preventDefault();
-    router.push(`/users?q=${encodeURIComponent(search)}&page=1`);
-  };
+  // Debounce search input
+  useEffect(() => {
+    const delayDebounceFn = setTimeout(() => {
+      // Only push if the search actually changed to avoid initial mount push
+      if (search !== searchQuery) {
+        router.push(`/users?q=${encodeURIComponent(search)}&page=1`);
+      }
+    }, 300);
+
+    return () => clearTimeout(delayDebounceFn);
+  }, [search, router, searchQuery]);
 
   const handlePageChange = (newPage: number) => {
     if (newPage < 1 || newPage > totalPages) return;
@@ -46,7 +53,7 @@ export function UsersTable({ users, total, currentPage, searchQuery }: UsersTabl
     <div className="space-y-4">
       {/* Toolbar */}
       <div className="flex items-center justify-between">
-        <form onSubmit={handleSearch} className="relative w-full max-w-sm">
+        <div className="relative w-full max-w-sm">
           <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-zinc-500" />
           <Input 
             placeholder="Search by email..." 
@@ -54,7 +61,7 @@ export function UsersTable({ users, total, currentPage, searchQuery }: UsersTabl
             value={search}
             onChange={(e) => setSearch(e.target.value)}
           />
-        </form>
+        </div>
       </div>
 
       {/* Table */}
@@ -142,8 +149,8 @@ export function UsersTable({ users, total, currentPage, searchQuery }: UsersTabl
         </div>
       )}
 
-      {/* Details Sheet */}
-      <UserDetailsSheet 
+      {/* Details Dialog */}
+      <UserDetailsDialog 
         user={selectedUser} 
         open={selectedUser !== null} 
         onOpenChange={(open) => {

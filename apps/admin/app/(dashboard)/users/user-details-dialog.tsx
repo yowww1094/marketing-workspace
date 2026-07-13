@@ -1,35 +1,35 @@
 'use client';
 
 import {
-  Sheet,
-  SheetContent,
-  SheetDescription,
-  SheetHeader,
-  SheetTitle,
-} from '@marketing-workspace/ui/components/ui/sheet';
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from '@marketing-workspace/ui/components/ui/dialog';
 import { Badge } from '@marketing-workspace/ui/components/ui/badge';
 import { Separator } from '@marketing-workspace/ui/components/ui/separator';
 import { AdminUserView } from '@/lib/users';
 import { Mail, Calendar, Package, CreditCard, Clock } from 'lucide-react';
 
-interface UserDetailsSheetProps {
+interface UserDetailsDialogProps {
   user: AdminUserView | null;
   open: boolean;
   onOpenChange: (open: boolean) => void;
 }
 
-export function UserDetailsSheet({ user, open, onOpenChange }: UserDetailsSheetProps) {
+export function UserDetailsDialog({ user, open, onOpenChange }: UserDetailsDialogProps) {
   if (!user) return null;
 
   return (
-    <Sheet open={open} onOpenChange={onOpenChange}>
-      <SheetContent className="w-full sm:max-w-md bg-white overflow-y-auto">
-        <SheetHeader className="mb-6">
-          <SheetTitle className="text-xl font-bold text-zinc-900">User Details</SheetTitle>
-          <SheetDescription>
+    <Dialog open={open} onOpenChange={onOpenChange}>
+      <DialogContent className="w-full sm:max-w-md bg-white">
+        <DialogHeader className="mb-4">
+          <DialogTitle className="text-xl font-bold text-zinc-900">User Details</DialogTitle>
+          <DialogDescription>
             ID: <span className="font-mono text-xs">{user.id}</span>
-          </SheetDescription>
-        </SheetHeader>
+          </DialogDescription>
+        </DialogHeader>
 
         <div className="space-y-6">
           {/* Header Info */}
@@ -119,7 +119,7 @@ export function UserDetailsSheet({ user, open, onOpenChange }: UserDetailsSheetP
             </div>
           </div>
         </div>
-      </SheetContent>
-    </Sheet>
+      </DialogContent>
+    </Dialog>
   );
 }
