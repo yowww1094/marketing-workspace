@@ -2,17 +2,7 @@
 
 import { Bar, BarChart, ResponsiveContainer, Tooltip, XAxis, YAxis, CartesianGrid } from 'recharts';
 
-const data = [
-  { name: 'Mon', success: 400, failed: 24 },
-  { name: 'Tue', success: 300, failed: 13 },
-  { name: 'Wed', success: 550, failed: 45 },
-  { name: 'Thu', success: 278, failed: 39 },
-  { name: 'Fri', success: 189, failed: 48 },
-  { name: 'Sat', success: 239, failed: 38 },
-  { name: 'Sun', success: 349, failed: 43 },
-];
-
-export function AIGenerationsChart() {
+export function AIGenerationsChart({ data }: { data: { name: string; success: number; failed: number }[] }) {
   return (
     <div className="h-[300px] w-full">
       <ResponsiveContainer width="100%" height="100%">

@@ -9,6 +9,8 @@ import {
   Clock, ListTree, Database, RefreshCw 
 } from 'lucide-react';
 import { getDashboardMetrics, getSystemHealth } from '@/lib/metrics';
+import { revalidatePath } from 'next/cache';
+import { RefreshButton } from '@/components/refresh-button';
 
 export default async function AdminDashboardPage() {
   const metrics = await getDashboardMetrics();
@@ -21,6 +23,11 @@ export default async function AdminDashboardPage() {
     { name: 'AI Orchestrator', ...health.aiOrchestrator },
   ];
 
+  async function refreshData() {
+    'use server';
+    revalidatePath('/', 'layout');
+  }
+
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
@@ -28,10 +35,9 @@ export default async function AdminDashboardPage() {
           <h1 className="text-2xl font-bold tracking-tight text-zinc-950">Operations Dashboard</h1>
           <p className="text-sm text-zinc-500">Platform metrics and system health overview.</p>
         </div>
-        <Button variant="outline" className="gap-2 bg-white">
-          <RefreshCw className="h-4 w-4" />
-          Refresh Data
-        </Button>
+        <form action={refreshData}>
+          <RefreshButton />
+        </form>
       </div>
 
       <div className="grid gap-4 md:grid-cols-3 lg:grid-cols-6">
@@ -165,20 +171,18 @@ export default async function AdminDashboardPage() {
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
-              {[
-                { message: 'User max@company.com upgraded to Pro', time: '2m ago' },
-                { message: 'Failed generation in Product #429', time: '15m ago', error: true },
-                { message: 'New user signed up: alex@startup.io', time: '1h ago' },
-                { message: 'Database backup completed', time: '2h ago' },
-              ].map((activity, i) => (
+              {metrics.recentActivity.map((activity, i) => (
                 <div key={i} className="flex items-start gap-3">
-                  <div className={`mt-0.5 h-2 w-2 rounded-full shrink-0 ${activity.error ? 'bg-red-500' : 'bg-zinc-300'}`} />
+                  <div className={`mt-0.5 h-2 w-2 rounded-full shrink-0 ${activity.error ? 'bg-red-500' : 'bg-emerald-500'}`} />
                   <div className="space-y-1 text-sm">
                     <p className={activity.error ? 'text-red-600 font-medium' : 'text-zinc-700'}>{activity.message}</p>
                     <p className="text-xs text-zinc-400">{activity.time}</p>
                   </div>
                 </div>
               ))}
+              {metrics.recentActivity.length === 0 && (
+                <p className="text-sm text-zinc-500 text-center py-4">No recent activity.</p>
+              )}
             </div>
           </CardContent>
         </Card>
@@ -188,20 +192,20 @@ export default async function AdminDashboardPage() {
         <Card className="col-span-4 shadow-sm border-zinc-200">
           <CardHeader>
             <CardTitle>User Growth</CardTitle>
-            <CardDescription>Monthly active users over time.</CardDescription>
+            <CardDescription>Monthly active users over the last 6 months.</CardDescription>
           </CardHeader>
           <CardContent className="pl-2">
-            <UserGrowthChart />
+            <UserGrowthChart data={metrics.userGrowthData} />
           </CardContent>
         </Card>
         
         <Card className="col-span-3 shadow-sm border-zinc-200">
           <CardHeader>
             <CardTitle>AI Generations</CardTitle>
-            <CardDescription>Success vs Failed tasks.</CardDescription>
+            <CardDescription>Success vs Failed tasks over the last 7 days.</CardDescription>
           </CardHeader>
           <CardContent>
-            <AIGenerationsChart />
+            <AIGenerationsChart data={metrics.aiGenerationsData} />
           </CardContent>
         </Card>
       </div>

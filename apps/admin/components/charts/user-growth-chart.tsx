@@ -2,17 +2,7 @@
 
 import { Area, AreaChart, ResponsiveContainer, Tooltip, XAxis, YAxis, CartesianGrid } from 'recharts';
 
-const data = [
-  { name: 'Jan', total: 120 },
-  { name: 'Feb', total: 210 },
-  { name: 'Mar', total: 320 },
-  { name: 'Apr', total: 450 },
-  { name: 'May', total: 580 },
-  { name: 'Jun', total: 850 },
-  { name: 'Jul', total: 1200 },
-];
-
-export function UserGrowthChart() {
+export function UserGrowthChart({ data }: { data: { name: string; total: number }[] }) {
   return (
     <div className="h-[300px] w-full">
       <ResponsiveContainer width="100%" height="100%">

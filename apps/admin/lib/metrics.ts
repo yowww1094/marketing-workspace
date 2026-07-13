@@ -1,15 +1,7 @@
-import { createClient } from '@supabase/supabase-js';
+import { createAdminClient } from '@marketing-workspace/auth/admin';
 
 // Initialize a service role client to bypass RLS for admin metrics
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
-const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY!;
-
-const supabase = createClient(supabaseUrl, supabaseServiceKey, {
-  auth: {
-    autoRefreshToken: false,
-    persistSession: false,
-  },
-});
+const supabase = createAdminClient();
 
 export async function getDashboardMetrics() {
   const [
@@ -21,6 +13,8 @@ export async function getDashboardMetrics() {
     { count: totalJobs },
     { count: failedJobs },
     { data: jobsData }, // for cost and processing time
+    { data: recentProducts },
+    { data: recentFailedJobs },
   ] = await Promise.all([
     supabase.auth.admin.listUsers(),
     supabase.from('subscriptions').select('*', { count: 'exact', head: true }).eq('plan_id', 'pro').eq('status', 'active'),
@@ -30,13 +24,16 @@ export async function getDashboardMetrics() {
     supabase.from('jobs').select('*', { count: 'exact', head: true }),
     supabase.from('jobs').select('*', { count: 'exact', head: true }).eq('status', 'failed'),
     supabase.from('jobs').select('status, created_at, updated_at, cost').limit(10000), // Get subset for aggregations
+    supabase.from('products').select('id, name, created_at').order('created_at', { ascending: false }).limit(5),
+    supabase.from('jobs').select('id, created_at').eq('status', 'failed').order('created_at', { ascending: false }).limit(5),
   ]);
 
   if (usersError) {
     console.error('Error fetching users:', usersError);
   }
 
-  const totalUsers = users?.users?.length || 0;
+  const allUsers = users?.users || [];
+  const totalUsers = allUsers.length;
   const mrr = (proSubscribers || 0) * 50;
 
   // AI & Performance Aggregations
@@ -76,6 +73,90 @@ export async function getDashboardMetrics() {
     }
   }
 
+  // --- Dynamic Chart Data Aggregation ---
+  
+  // User Growth Chart: Last 6 months
+  const userGrowthData: { name: string; total: number }[] = [];
+  for (let i = 5; i >= 0; i--) {
+    const d = new Date();
+    d.setMonth(d.getMonth() - i);
+    const monthName = d.toLocaleString('default', { month: 'short' });
+    const year = d.getFullYear();
+    const monthIndex = d.getMonth();
+    
+    // Count users created in this month/year
+    const count = allUsers.filter(u => {
+      const created = new Date(u.created_at);
+      return created.getMonth() === monthIndex && created.getFullYear() === year;
+    }).length;
+
+    // Keep cumulative total (or just new users per month). Chart implies cumulative total usually.
+    // Since we don't have historical snapshot, we just show cumulative users up to that month.
+    const cumulative = allUsers.filter(u => new Date(u.created_at).getTime() <= new Date(year, monthIndex + 1, 0).getTime()).length;
+    
+    userGrowthData.push({ name: monthName, total: cumulative });
+  }
+
+  // AI Generations Chart: Last 7 days
+  const aiGenerationsData: { name: string; success: number; failed: number }[] = [];
+  for (let i = 6; i >= 0; i--) {
+    const d = new Date();
+    d.setDate(d.getDate() - i);
+    const dayName = d.toLocaleString('default', { weekday: 'short' });
+    
+    // Filter jobs for this specific day
+    const dayJobs = (jobsData || []).filter(j => {
+      const created = new Date(j.created_at);
+      return created.getDate() === d.getDate() && created.getMonth() === d.getMonth();
+    });
+
+    const success = dayJobs.filter(j => j.status === 'completed').length;
+    const failed = dayJobs.filter(j => j.status === 'failed').length;
+
+    aiGenerationsData.push({ name: dayName, success, failed });
+  }
+
+  // --- Recent Activity Aggregation ---
+  const allActivities: { message: string; date: Date; error?: boolean }[] = [];
+
+  // Add recent users
+  allUsers.sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())
+    .slice(0, 5)
+    .forEach(u => allActivities.push({ 
+      message: `New user signed up: ${u.email}`, 
+      date: new Date(u.created_at) 
+    }));
+
+  // Add recent products
+  (recentProducts || []).forEach(p => allActivities.push({ 
+    message: `Product generated: ${p.name || 'Unnamed'}`, 
+    date: new Date(p.created_at) 
+  }));
+
+  // Add recent failed jobs
+  (recentFailedJobs || []).forEach(j => allActivities.push({ 
+    message: `Failed generation in Job #${j.id.split('-')[0]}`, 
+    date: new Date(j.created_at),
+    error: true
+  }));
+
+  // Sort by date desc and format time string
+  const recentActivity = allActivities
+    .sort((a, b) => b.date.getTime() - a.date.getTime())
+    .slice(0, 4)
+    .map(act => {
+      const diffMs = Date.now() - act.date.getTime();
+      const diffMins = Math.floor(diffMs / 60000);
+      const diffHours = Math.floor(diffMins / 60);
+      const diffDays = Math.floor(diffHours / 24);
+      let timeStr = 'just now';
+      if (diffDays > 0) timeStr = `${diffDays}d ago`;
+      else if (diffHours > 0) timeStr = `${diffHours}h ago`;
+      else if (diffMins > 0) timeStr = `${diffMins}m ago`;
+      
+      return { message: act.message, time: timeStr, error: act.error };
+    });
+
   return {
     totalUsers,
     proSubscribers: proSubscribers || 0,
@@ -89,6 +170,9 @@ export async function getDashboardMetrics() {
     avgProcessingStr,
     queueDepth,
     totalCost,
+    userGrowthData,
+    aiGenerationsData,
+    recentActivity
   };
 }
 
@@ -101,7 +185,7 @@ export async function getSystemHealth() {
   };
 
   // 1. Check Database
-  if (supabaseUrl && supabaseServiceKey) {
+  try {
     const start = Date.now();
     const { error } = await supabase.from('admin_users').select('id').limit(1);
     const latency = Date.now() - start;
@@ -110,6 +194,8 @@ export async function getSystemHealth() {
     } else {
       health.database = { status: 'Operational', latency: `${latency}ms` };
     }
+  } catch (e) {
+    health.database = { status: 'Not Configured', latency: '-' };
   }
 
   // 2. Check Cache (Redis)
