@@ -3,11 +3,11 @@ import { ErrorList } from './error-list';
 import { ErrorDetails } from './error-details';
 import { RefreshCw, Download, AlertCircle, AlertTriangle, CheckCircle2, TrendingUp } from 'lucide-react';
 
-export default async function ErrorsPage({
-  searchParams,
-}: {
-  searchParams: { search?: string; level?: string; status?: string; id?: string };
+export default async function ErrorsPage(props: {
+  searchParams: Promise<{ search?: string; level?: string; status?: string; id?: string }>;
 }) {
+  const searchParams = await props.searchParams;
+  
   const { kpis, logs } = await getErrors({
     search: searchParams.search,
     level: searchParams.level,
@@ -17,7 +17,7 @@ export default async function ErrorsPage({
   const selectedLog = logs.find(l => l.id === searchParams.id) || null;
 
   return (
-    <div className="flex flex-col h-full bg-white max-w-[1280px] p-6 gap-6">
+    <div className="flex flex-col h-[calc(100vh-112px)] w-full gap-6">
       
       {/* Header */}
       <div className="flex items-start justify-between">

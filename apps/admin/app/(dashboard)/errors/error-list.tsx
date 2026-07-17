@@ -1,11 +1,11 @@
 'use client';
 
 import { SystemLog } from '@/lib/errors';
-import { useRouter, useSearchParams, usePathname } from 'next/navigation';
+import Link from 'next/link';
+import { useSearchParams, usePathname } from 'next/navigation';
 import { cn } from '@marketing-workspace/ui/utils';
 
 export function ErrorList({ logs }: { logs: SystemLog[] }) {
-  const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const selectedId = searchParams.get('id');
@@ -26,23 +26,21 @@ export function ErrorList({ logs }: { logs: SystemLog[] }) {
     }
   };
 
-  const selectError = (id: string) => {
-    const params = new URLSearchParams(searchParams);
-    params.set('id', id);
-    router.push(`${pathname}?${params.toString()}`);
-  };
-
   return (
     <div className="flex flex-col gap-[6px] h-full overflow-y-auto w-[320px] shrink-0 border-r border-zinc-200 pr-4">
       {logs.map(log => {
         const isSelected = selectedId === log.id;
         // Strip out the timezone for display
         const timeStr = new Date(log.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+        
+        const params = new URLSearchParams(searchParams.toString());
+        params.set('id', log.id);
+        const href = `${pathname}?${params.toString()}`;
 
         return (
-          <button
+          <Link
             key={log.id}
-            onClick={() => selectError(log.id)}
+            href={href}
             className={cn(
               "w-full text-left p-[13.25px] rounded-[12px] border-[1.25px] flex flex-col gap-1 transition-colors",
               isSelected 
@@ -65,7 +63,7 @@ export function ErrorList({ logs }: { logs: SystemLog[] }) {
               </span>
               <span className="font-medium text-[#6e6e85] text-[10px]">{timeStr}</span>
             </div>
-          </button>
+          </Link>
         );
       })}
       

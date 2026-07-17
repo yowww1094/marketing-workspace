@@ -7,14 +7,12 @@ import { revalidatePath } from 'next/cache';
 import { MRRChart } from './mrr-chart';
 import { FailedPayments } from './failed-payments';
 
-export default async function BillingPage({
-  searchParams,
-}: {
+export default async function BillingPage(props: {
   searchParams: Promise<{ page?: string; search?: string }>;
 }) {
-  const resolvedParams = await searchParams;
-  const currentPage = Number(resolvedParams.page) || 1;
-  const search = resolvedParams.search || '';
+  const searchParams = await props.searchParams;
+  const currentPage = Number(searchParams.page) || 1;
+  const search = searchParams.search || '';
 
   const metrics = await getBillingMetrics();
   const { subscriptions, totalPages } = await getPaginatedSubscriptions({ page: currentPage, search });

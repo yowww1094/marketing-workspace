@@ -9,7 +9,14 @@ import { Settings } from 'lucide-react';
 import Link from 'next/link';
 import { Button } from '@marketing-workspace/ui/components/ui/button';
 
-export default async function AIOperationsPage() {
+export default async function AIOperationsPage(props: {
+  searchParams: Promise<{ page?: string; search?: string; tab?: string }>;
+}) {
+  const searchParams = await props.searchParams;
+  const currentPage = Number(searchParams.page) || 1;
+  const search = searchParams.search || '';
+  const currentTab = searchParams.tab || 'generations';
+  
   const data = await getAIOperationsData();
 
   async function refreshData() {

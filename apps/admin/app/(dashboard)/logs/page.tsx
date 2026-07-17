@@ -3,13 +3,11 @@ import { ActivityFeed } from './activity-feed';
 import { RefreshButton } from '@/components/refresh-button';
 import { revalidatePath } from 'next/cache';
 
-export default async function ActivityLogsPage({
-  searchParams,
-}: {
-  searchParams: Promise<{ search?: string }>;
+export default async function ActivityLogsPage(props: {
+  searchParams: Promise<{ search?: string; type?: string }>;
 }) {
-  const resolvedParams = await searchParams;
-  const search = resolvedParams.search || '';
+  const searchParams = await props.searchParams;
+  const search = searchParams.search || '';
 
   const { logs } = await getActivityLogs({ search });
 

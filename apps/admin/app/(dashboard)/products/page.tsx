@@ -2,16 +2,14 @@ import { getPaginatedProducts } from '@/lib/products';
 import { ProductsTable } from './products-table';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@marketing-workspace/ui/components/ui/card';
 
-export default async function ProductsPage({
-  searchParams,
-}: {
-  searchParams: Promise<{ [key: string]: string | string[] | undefined }>
+export default async function ProductsPage(props: {
+  searchParams: Promise<{ page?: string; search?: string }>;
 }) {
-  const resolvedParams = await searchParams;
-  const page = typeof resolvedParams.page === 'string' ? parseInt(resolvedParams.page, 10) : 1;
-  const search = typeof resolvedParams.q === 'string' ? resolvedParams.q : '';
+  const searchParams = await props.searchParams;
+  const currentPage = Number(searchParams.page) || 1;
+  const search = searchParams.search || '';
 
-  const { products, total } = await getPaginatedProducts({ page, search });
+  const { products, total } = await getPaginatedProducts({ page: currentPage, search });
 
   return (
     <div className="space-y-6">
