@@ -12,6 +12,8 @@ import {
   Sparkles,
   CreditCard,
   Terminal,
+  Activity,
+  AlertCircle,
 } from 'lucide-react';
 import { logout } from '@/app/auth/actions';
 
@@ -38,8 +40,13 @@ const routes = [
   },
   {
     label: 'Activity Logs',
-    icon: Terminal,
+    icon: Activity,
     href: '/logs',
+  },
+  {
+    label: 'Error Logs',
+    icon: AlertCircle,
+    href: '/errors',
   },
   {
     label: 'Settings',
