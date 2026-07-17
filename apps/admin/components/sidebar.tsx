@@ -9,6 +9,7 @@ import {
   Package,
   Settings,
   LogOut,
+  Sparkles,
 } from 'lucide-react';
 import { logout } from '@/app/auth/actions';
 
@@ -32,6 +33,11 @@ const routes = [
     label: 'Settings',
     icon: Settings,
     href: '/settings',
+  },
+  {
+    label: 'AI Operations',
+    icon: Sparkles,
+    href: '/ai',
   },
 ];
 
