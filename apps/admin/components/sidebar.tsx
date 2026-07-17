@@ -39,6 +39,11 @@ const routes = [
     icon: Sparkles,
     href: '/ai',
   },
+  {
+    label: 'AI Configuration',
+    icon: Settings, // Reuse settings or use another icon
+    href: '/ai/configure',
+  },
 ];
 
 export function Sidebar() {
