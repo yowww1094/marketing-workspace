@@ -10,6 +10,7 @@ import {
   Settings,
   LogOut,
   Sparkles,
+  CreditCard,
 } from 'lucide-react';
 import { logout } from '@/app/auth/actions';
 
@@ -28,6 +29,11 @@ const routes = [
     label: 'Products',
     icon: Package,
     href: '/products',
+  },
+  {
+    label: 'Billing',
+    icon: CreditCard,
+    href: '/billing',
   },
   {
     label: 'Settings',
