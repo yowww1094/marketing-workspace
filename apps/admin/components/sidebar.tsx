@@ -14,6 +14,7 @@ import {
   Terminal,
   Activity,
   AlertCircle,
+  ShieldAlert,
 } from 'lucide-react';
 import { logout } from '@/app/auth/actions';
 
@@ -47,6 +48,11 @@ const routes = [
     label: 'Error Logs',
     icon: AlertCircle,
     href: '/errors',
+  },
+  {
+    label: 'Security Center',
+    icon: ShieldAlert,
+    href: '/security',
   },
   {
     label: 'Settings',
