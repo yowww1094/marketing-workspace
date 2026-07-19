@@ -17,7 +17,7 @@ export default async function ActivityLogsPage(props: {
   }
 
   return (
-    <div className="space-y-6 max-w-[1024px]">
+    <div className="space-y-6 w-full">
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-[20px] font-bold tracking-tight text-[#0c0c0e]">Activity Logs</h1>
