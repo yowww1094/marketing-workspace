@@ -26,10 +26,13 @@ export async function replyToTicketAction(ticketId: string, replyMessage: string
     throw new Error('Failed to send email reply.');
   }
 
-  // 3. Update Status to resolved
+  // 3. Update Status to resolved and set resolved_at
   const { error: updateError } = await supabase
     .from('support_tickets')
-    .update({ status: 'resolved' })
+    .update({ 
+      status: 'resolved',
+      resolved_at: new Date().toISOString()
+    })
     .eq('id', ticketId);
 
   if (updateError) {

@@ -69,17 +69,42 @@ export async function getSupportKPIs() {
     .from('support_tickets')
     .select('*', { count: 'exact', head: true })
     .eq('status', 'resolved')
-    .gte('updated_at', startOfDay.toISOString());
+    .gte('resolved_at', startOfDay.toISOString());
 
-  // Avg Response Time (Simulated or fetched)
-  // Since we don't have a "responses" table, we simulate the KPI format required by Figma
+  // Fetch all resolved tickets to calculate Avg Response Time and CSAT
+  const { data: metricsData } = await supabase
+    .from('support_tickets')
+    .select('created_at, resolved_at, csat_score')
+    .not('resolved_at', 'is', null);
+
+  let totalResponseMs = 0;
+  let csatTotal = 0;
+  let csatCount = 0;
+
+  if (metricsData && metricsData.length > 0) {
+    metricsData.forEach(ticket => {
+      const created = new Date(ticket.created_at).getTime();
+      const resolved = new Date(ticket.resolved_at).getTime();
+      totalResponseMs += (resolved - created);
+      
+      if (ticket.csat_score !== null && ticket.csat_score !== undefined) {
+        csatTotal += ticket.csat_score;
+        csatCount++;
+      }
+    });
+  }
+
+  const avgResponseMs = (metricsData && metricsData.length > 0) ? totalResponseMs / metricsData.length : 0;
+  const avgResponseHours = avgResponseMs > 0 ? (avgResponseMs / (1000 * 60 * 60)).toFixed(1) : '0.0';
   
+  const avgCsat = csatCount > 0 ? (csatTotal / csatCount).toFixed(1) : '0.0';
+
   return {
     openTickets: openCount || 0,
     resolvedToday: resolvedTodayCount || 0,
-    avgResponseTime: '2.4h',
-    avgResponseChange: '-0.8h vs last week',
-    csatScore: '4.7/5',
-    csatChange: '+0.2 this month',
+    avgResponseTime: `${avgResponseHours}h`,
+    avgResponseChange: '', // Need historical data for change
+    csatScore: `${avgCsat}/5`,
+    csatChange: '', // Need historical data for change
   };
 }

@@ -32,4 +32,4 @@ USING (auth.uid() = user_id);
 CREATE TRIGGER set_support_tickets_updated_at
 BEFORE UPDATE ON public.support_tickets
 FOR EACH ROW
-EXECUTE FUNCTION public.handle_updated_at();
+EXECUTE FUNCTION public.set_updated_at();
