@@ -37,19 +37,21 @@ export default async function SystemHealthPage() {
             <span className="text-[12px] font-medium text-[#6e6e85]">All Services</span>
             <CheckCircle2 className="h-4 w-4 text-[#6e6e85]" />
           </div>
-          <span className="text-xl font-bold text-[#0c0c0e]">12/12</span>
+          <span className="text-xl font-bold text-[#0c0c0e]">{metrics.operationalServices}/{metrics.totalServices}</span>
         </div>
 
-        {/* Overall Uptime */}
+        {/* Avg API Latency (replaces uptime) */}
         <div className="bg-[#f8f8fb] border-[1.25px] border-[#e2e2ea] rounded-[12px] p-4 flex flex-col gap-2 relative">
           <div className="flex items-center justify-between">
-            <span className="text-[12px] font-medium text-[#6e6e85]">Overall Uptime</span>
+            <span className="text-[12px] font-medium text-[#6e6e85]">Avg API Latency</span>
             <Activity className="h-4 w-4 text-[#6e6e85]" />
           </div>
-          <span className="text-xl font-bold text-[#0c0c0e]">99.94%</span>
+          <span className="text-xl font-bold text-[#0c0c0e]">
+            {Math.round((metrics.dbLatencyMs + metrics.stripe.latencyMs + metrics.resend.latencyMs + metrics.nvidia.latencyMs) / 4)}ms
+          </span>
           <div className="absolute bottom-4 right-4 flex items-center gap-1">
             <Activity className="h-2.5 w-2.5 text-[#00a63e]" />
-            <span className="text-[11px] font-medium text-[#00a63e]">Last 30 days</span>
+            <span className="text-[11px] font-medium text-[#00a63e]">Live</span>
           </div>
         </div>
 
@@ -71,13 +73,13 @@ export default async function SystemHealthPage() {
           <span className="text-xl font-bold text-[#0c0c0e]">{metrics.aiWorkersActive}/12</span>
         </div>
 
-        {/* DB Connections */}
+        {/* Total Products (replaces DB Connections) */}
         <div className="bg-[#f8f8fb] border-[1.25px] border-[#e2e2ea] rounded-[12px] p-4 flex flex-col gap-2">
           <div className="flex items-center justify-between">
-            <span className="text-[12px] font-medium text-[#6e6e85]">DB Connections</span>
+            <span className="text-[12px] font-medium text-[#6e6e85]">Total Products</span>
             <Database className="h-4 w-4 text-[#6e6e85]" />
           </div>
-          <span className="text-xl font-bold text-[#0c0c0e]">84/200</span>
+          <span className="text-xl font-bold text-[#0c0c0e]">{metrics.totalProducts}</span>
         </div>
 
         {/* Queue Depth */}

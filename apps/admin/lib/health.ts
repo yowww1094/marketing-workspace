@@ -12,6 +12,9 @@ export type HealthMetrics = {
   resend: { latencyMs: number; status: ServiceStatus };
   nvidia: { latencyMs: number; status: ServiceStatus };
   cache: { latencyMs: number; status: ServiceStatus };
+  totalServices: number;
+  operationalServices: number;
+  totalProducts: number;
 };
 
 export async function getHealthMetrics(): Promise<HealthMetrics> {
@@ -121,6 +124,16 @@ export async function getHealthMetrics(): Promise<HealthMetrics> {
     aiLatencyS = parseFloat((totalMs / recentCompletedJobs.length / 1000).toFixed(2));
   }
 
+  // Total Products
+  const { count: totalProducts } = await supabase
+    .from('products')
+    .select('*', { count: 'exact', head: true });
+
+  const aiStatus = (pendingCount || 0) > 10 || aiLatencyS > 5 ? 'degraded' : 'operational';
+  const allStatuses = [dbStatus, stripe.status, resend.status, nvidia.status, cache.status, aiStatus];
+  const operationalServices = allStatuses.filter(s => s === 'operational' || s === 'unconfigured').length;
+  // Note: we count unconfigured as 'not broken' for the top level KPI
+
   return {
     dbLatencyMs,
     dbStatus,
@@ -130,6 +143,9 @@ export async function getHealthMetrics(): Promise<HealthMetrics> {
     stripe,
     resend,
     nvidia,
-    cache
+    cache,
+    totalServices: 6,
+    operationalServices,
+    totalProducts: totalProducts || 0
   };
 }
