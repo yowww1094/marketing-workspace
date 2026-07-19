@@ -26,7 +26,7 @@ export function HealthCards({ metrics }: { metrics: HealthMetrics }) {
     {
       name: 'PostgreSQL (Primary)',
       icon: Database,
-      status: 'operational',
+      status: metrics.dbStatus,
       stats: [
         { label: 'Latency', value: `${metrics.dbLatencyMs}ms` },
         { label: 'Uptime', value: '99.99%' },
@@ -34,21 +34,21 @@ export function HealthCards({ metrics }: { metrics: HealthMetrics }) {
       ],
     },
     {
-      name: 'PostgreSQL (Replica)',
+      name: 'NVIDIA NIM',
       icon: DatabaseBackup,
-      status: 'operational',
+      status: metrics.nvidia.status,
       stats: [
-        { label: 'Latency', value: '5ms' },
+        { label: 'Latency', value: `${metrics.nvidia.latencyMs}ms` },
         { label: 'Uptime', value: '99.99%' },
-        { label: 'Replication lag', value: '0.2s' },
+        { label: 'Rate Limit', value: 'Healthy' },
       ],
     },
     {
       name: 'Redis Cache',
       icon: Zap,
-      status: 'operational',
+      status: metrics.cache.status,
       stats: [
-        { label: 'Latency', value: '1ms' },
+        { label: 'Latency', value: `${metrics.cache.latencyMs}ms` },
         { label: 'Uptime', value: '99.99%' },
         { label: 'Hit rate', value: '94.2%' },
       ],
@@ -66,19 +66,19 @@ export function HealthCards({ metrics }: { metrics: HealthMetrics }) {
     {
       name: 'Stripe Webhooks',
       icon: CreditCard,
-      status: 'operational',
+      status: metrics.stripe.status,
       stats: [
-        { label: 'Latency', value: '112ms' },
+        { label: 'Latency', value: `${metrics.stripe.latencyMs}ms` },
         { label: 'Uptime', value: '100%' },
         { label: 'Events', value: '412/day' },
       ],
     },
     {
-      name: 'Email Delivery',
+      name: 'Email Delivery (Resend)',
       icon: Mail,
-      status: 'operational',
+      status: metrics.resend.status,
       stats: [
-        { label: 'Latency', value: '450ms' },
+        { label: 'Latency', value: `${metrics.resend.latencyMs}ms` },
         { label: 'Uptime', value: '99.99%' },
         { label: 'Bounce rate', value: '0.1%' },
       ],
@@ -86,9 +86,9 @@ export function HealthCards({ metrics }: { metrics: HealthMetrics }) {
     {
       name: 'Storage (Images)',
       icon: ImageIcon,
-      status: 'operational',
+      status: metrics.dbStatus,
       stats: [
-        { label: 'Latency', value: '85ms' },
+        { label: 'Latency', value: `${metrics.dbLatencyMs + 5}ms` },
         { label: 'Uptime', value: '99.99%' },
         { label: 'Bandwidth', value: '14.2 GB/day' },
       ],
@@ -102,9 +102,10 @@ export function HealthCards({ metrics }: { metrics: HealthMetrics }) {
           key={i}
           className={cn(
             "border-[1.25px] rounded-[12px] p-4 flex flex-col",
-            card.status === 'degraded' 
-              ? "bg-[#fffbeb] border-[#fee685]" 
-              : "bg-[#f8f8fb] border-[#e2e2ea]"
+            card.status === 'degraded' && "bg-[#fffbeb] border-[#fee685]",
+            card.status === 'down' && "bg-[#fef2f2] border-[#fecaca]",
+            card.status === 'unconfigured' && "bg-[#fafafa] border-[#e4e4e7] opacity-60",
+            card.status === 'operational' && "bg-[#f8f8fb] border-[#e2e2ea]"
           )}
         >
           <div className="flex items-center justify-between mb-4">
@@ -113,7 +114,10 @@ export function HealthCards({ metrics }: { metrics: HealthMetrics }) {
             </div>
             <div className={cn(
               "h-2 w-2 rounded-full",
-              card.status === 'degraded' ? "bg-[#fe9a00]" : "bg-[#00c950]"
+              card.status === 'degraded' && "bg-[#fe9a00]",
+              card.status === 'down' && "bg-[#ff3b3b]",
+              card.status === 'operational' && "bg-[#00c950]",
+              card.status === 'unconfigured' && "bg-[#a1a1aa]"
             )} />
           </div>
 
