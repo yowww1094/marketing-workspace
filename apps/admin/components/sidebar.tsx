@@ -15,6 +15,7 @@ import {
   Activity,
   AlertCircle,
   ShieldAlert,
+  LifeBuoy,
 } from 'lucide-react';
 import { logout } from '@/app/auth/actions';
 
@@ -63,6 +64,7 @@ const routeGroups: RouteGroup[] = [
   {
     title: 'Support',
     items: [
+      { label: 'Support Center', icon: LifeBuoy, href: '/support' },
       { label: 'Activity Logs', icon: Terminal, href: '/logs' },
       { label: 'Error Logs', icon: AlertCircle, href: '/errors' },
     ]
