@@ -3,7 +3,7 @@ import { SupportForm } from './support-form';
 import { redirect } from 'next/navigation';
 
 export default async function HelpPage() {
-  const supabase = createClient();
+  const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
 
   if (!user) {

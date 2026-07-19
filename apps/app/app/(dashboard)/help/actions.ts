@@ -16,7 +16,7 @@ export async function submitSupportTicketAction(formData: {
   type: string;
   imageUrls: string[];
 }) {
-  const supabase = createClient();
+  const supabase = await createClient();
   
   // Verify auth session securely on the server
   const { data: { user } } = await supabase.auth.getUser();
