@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import localFont from "next/font/local";
 import "./globals.css";
 import { TooltipProvider } from "@marketing-workspace/ui/components/ui/tooltip";
+import { VercelAnalyticsProvider } from "@marketing-workspace/analytics";
 import { MarketingHeader } from "../components/marketing-header";
 import { MarketingFooter } from "../components/marketing-footer";
 import { Toaster } from "@marketing-workspace/ui/components/ui/sonner";
@@ -36,6 +37,7 @@ export default function RootLayout({
           <MarketingFooter />
         </TooltipProvider>
         <Toaster />
+        <VercelAnalyticsProvider />
       </body>
     </html>
   );

@@ -16,6 +16,7 @@
     "@marketing-workspace/design-system": "workspace:*",
     "@marketing-workspace/monitoring": "workspace:*",
     "@marketing-workspace/ui": "workspace:*",
+    "@sentry/nextjs": "^10.66.0",
     "@tailwindcss/postcss": "^4.0.0",
     "lucide-react": "^0.470.0",
     "next": "16.2.0",

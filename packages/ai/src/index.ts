@@ -4,6 +4,7 @@ export * from './client';
 import { generateObject } from 'ai';
 import { getAIProvider } from './client';
 import { JobSchemas } from './schemas';
+import { logError, logInfo } from '@marketing-workspace/monitoring';
 
 export interface AIJobConfig {
   provider: string;
@@ -24,14 +25,35 @@ export async function executeAIJob(
     throw new Error(`No Zod schema defined for job type: ${jobType}`);
   }
 
-  const { object } = await generateObject({
-    model,
-    schema,
-    system: config.system_prompt,
-    prompt: `Analyze the following context and generate the required JSON structure.\n\nContext Data:\n${JSON.stringify(contextData, null, 2)}`,
-    temperature: config.temperature,
-  });
+  logInfo('AI Job execution started', { metadata: { jobType, model: config.model_name, provider: config.provider } });
+  const startTime = Date.now();
 
-  return object;
+  try {
+    const { object } = await generateObject({
+      model,
+      schema,
+      system: config.system_prompt,
+      prompt: `Analyze the following context and generate the required JSON structure.\n\nContext Data:\n${JSON.stringify(contextData, null, 2)}`,
+      temperature: config.temperature,
+    });
+
+    const durationMs = Date.now() - startTime;
+    logInfo('AI Job execution completed', { metadata: { jobType, durationMs } });
+
+    return object;
+  } catch (error: any) {
+    const durationMs = Date.now() - startTime;
+    logError(error, { 
+      metadata: { 
+        jobType, 
+        durationMs,
+        provider: config.provider,
+        model: config.model_name,
+        error_name: error?.name,
+        error_message: error?.message,
+      } 
+    });
+    throw error;
+  }
 }
 export {};

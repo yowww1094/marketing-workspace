@@ -1,3 +1,5 @@
+import * as Sentry from '@sentry/nextjs';
+
 export type LogLevel = 'info' | 'warn' | 'error' | 'fatal';
 
 export interface LogContext {
@@ -34,4 +36,34 @@ export function formatErrorLog(error: unknown, level: LogLevel = 'error', contex
     client_ip: context?.clientIp || null,
     metadata: context?.metadata || null,
   };
+}
+
+export function logError(error: unknown, context?: LogContext) {
+  const formatted = formatErrorLog(error, 'error', context);
+  console.error('[ERROR]', formatted);
+  
+  if (process.env.NEXT_PUBLIC_SENTRY_DSN) {
+    Sentry.withScope((scope) => {
+      if (context?.userId) scope.setUser({ id: context.userId });
+      if (context?.metadata) scope.setExtras(context.metadata);
+      Sentry.captureException(error);
+    });
+  }
+}
+
+export function logFatal(error: unknown, context?: LogContext) {
+  const formatted = formatErrorLog(error, 'fatal', context);
+  console.error('[FATAL]', formatted);
+  
+  if (process.env.NEXT_PUBLIC_SENTRY_DSN) {
+    Sentry.withScope((scope) => {
+      if (context?.userId) scope.setUser({ id: context.userId });
+      if (context?.metadata) scope.setExtras(context.metadata);
+      Sentry.captureException(error, { level: 'fatal' });
+    });
+  }
+}
+
+export function logInfo(message: string, context?: LogContext) {
+  console.info('[INFO]', { message, ...context });
 }

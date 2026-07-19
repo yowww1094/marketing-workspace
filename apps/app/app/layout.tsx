@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import localFont from "next/font/local";
 import "./globals.css";
 import { Toaster } from "@marketing-workspace/ui/components/ui/sonner";
+import { VercelAnalyticsProvider } from "@marketing-workspace/analytics";
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -27,6 +28,7 @@ export default function RootLayout({
       <body className={`${geistSans.variable} ${geistMono.variable}`}>
         {children}
         <Toaster />
+        <VercelAnalyticsProvider />
       </body>
     </html>
   );
