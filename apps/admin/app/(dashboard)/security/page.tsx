@@ -8,7 +8,7 @@ export default async function SecurityPage() {
   const { kpis, alerts, failedLogins } = await getSecurityData();
 
   return (
-    <div className="flex flex-col w-full gap-6 max-w-[1200px]">
+    <div className="flex flex-col w-full gap-6">
       
       {/* Header */}
       <div className="flex flex-col">

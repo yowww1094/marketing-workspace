@@ -27,7 +27,7 @@ export default async function ProductsPage(props: {
           <ProductsTable 
             products={products} 
             total={total} 
-            currentPage={page} 
+            currentPage={currentPage} 
             searchQuery={search} 
           />
         </CardContent>
