@@ -11,6 +11,8 @@ import {
 } from 'lucide-react';
 import { HealthCards } from './health-cards';
 
+export const dynamic = 'force-dynamic';
+
 export default async function SystemHealthPage() {
   const metrics = await getHealthMetrics();
 
