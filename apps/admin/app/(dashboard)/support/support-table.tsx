@@ -59,7 +59,7 @@ export function SupportTable({ tickets, total, currentPage }: { tickets: Support
               tickets.map((ticket) => (
                 <tr key={ticket.id} className="hover:bg-[#f8f8fb] transition-colors">
                   <td className="px-4 py-3 font-medium whitespace-nowrap">
-                    TK-{ticket.id.split('-')[0].toUpperCase()}
+                    TK-{ticket.id?.split('-')[0]?.toUpperCase() || 'UNKNOWN'}
                   </td>
                   <td className="px-4 py-3 whitespace-nowrap">
                     {ticket.guest_name || 'Anonymous User'}

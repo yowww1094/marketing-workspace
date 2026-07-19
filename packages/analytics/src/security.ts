@@ -1,4 +1,4 @@
-import { createServerClient } from '@marketing-workspace/auth/server';
+import { createClient } from '@marketing-workspace/auth/server';
 
 type SecurityEventParams = {
   severity: 'info' | 'warning' | 'high' | 'critical';
@@ -10,7 +10,7 @@ type SecurityEventParams = {
 };
 
 export async function reportSecurityIssue(params: SecurityEventParams) {
-  const supabase = createServerClient();
+  const supabase = await createClient();
   
   const { error } = await supabase.from('security_alerts').insert({
     severity: params.severity,

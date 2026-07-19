@@ -36,7 +36,7 @@ export function TicketDialog({ ticket, onClose }: { ticket: SupportTicket | null
       <DialogContent className="max-w-[600px] p-6 gap-6">
         <DialogHeader>
           <div className="flex items-center justify-between">
-            <DialogTitle className="text-xl">TK-{ticket.id.split('-')[0].toUpperCase()}</DialogTitle>
+            <DialogTitle className="text-xl">TK-{ticket.id?.split('-')[0]?.toUpperCase() || 'UNKNOWN'}</DialogTitle>
             <span className="px-2 py-1 rounded-[6px] text-xs font-medium bg-[#f1f1f5] text-[#6e6e85]">
               {ticket.status.toUpperCase()}
             </span>
@@ -50,7 +50,7 @@ export function TicketDialog({ ticket, onClose }: { ticket: SupportTicket | null
           {/* Reporter Info */}
           <div className="flex items-center gap-4 bg-[#f8f8fb] p-3 rounded-[8px] border border-[#e2e2ea]">
             <div className="h-10 w-10 bg-[#5b5bd6] rounded-full flex items-center justify-center text-white font-bold text-sm">
-              {(ticket.guest_name || 'A')[0].toUpperCase()}
+              {(ticket.guest_name || 'A').charAt(0).toUpperCase()}
             </div>
             <div className="flex flex-col">
               <span className="font-semibold text-sm">{ticket.guest_name || 'Anonymous User'}</span>

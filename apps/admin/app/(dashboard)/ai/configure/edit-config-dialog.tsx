@@ -43,8 +43,8 @@ export function EditConfigDialog({ config, open, onOpenChange }: EditConfigDialo
     const selectedCombo = formData.get('model_combo') as string;
     const [provider, model_name] = selectedCombo.split(':::');
     
-    formData.append('provider', provider);
-    formData.append('model_name', model_name);
+    formData.append('provider', provider || '');
+    formData.append('model_name', model_name || '');
 
     startTransition(async () => {
       try {

@@ -46,7 +46,7 @@ export function MRRChart({ data }: MRRChartProps) {
                 />
                 <Tooltip 
                   contentStyle={{ borderRadius: '8px', border: '1px solid #e4e4e7', boxShadow: '0 1px 2px rgba(0,0,0,0.05)' }}
-                  formatter={(value: number) => [`$${value}`, 'MRR']}
+                  formatter={(value: any) => [`$${value}`, 'MRR']}
                 />
                 <Area 
                   type="monotone" 

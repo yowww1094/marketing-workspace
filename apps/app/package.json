@@ -12,6 +12,7 @@
   },
   "dependencies": {
     "@hookform/resolvers": "^5.4.0",
+    "@marketing-workspace/analytics": "workspace:^",
     "@marketing-workspace/auth": "workspace:*",
     "@marketing-workspace/billing": "workspace:*",
     "@marketing-workspace/database": "workspace:*",

@@ -7,7 +7,7 @@ export async function GET() {
   const { data: users } = await supabase.auth.admin.listUsers();
   const userId = users?.users?.[0]?.id || null;
 
-  const mockLogs = [
+  const mockLogs: any[] = [
     {
       level: 'error',
       message: 'AI generation timeout — project_id: proj_ac892',
@@ -24,6 +24,7 @@ export async function GET() {
       stack_trace: 'Error: 429 Too Many Requests\n    at openai (/app/lib/openai.ts:112:5)',
       url: '/api/ai/queue',
       method: 'POST',
+      user_id: null,
       browser: 'ai-router',
       status: 'investigating',
     },
@@ -33,6 +34,7 @@ export async function GET() {
       stack_trace: null,
       url: null,
       method: 'SYSTEM',
+      user_id: null,
       browser: 'postgres',
       status: 'resolved',
     },
@@ -52,6 +54,7 @@ export async function GET() {
       stack_trace: null,
       url: null,
       method: 'SYSTEM',
+      user_id: null,
       browser: 'scheduler',
       status: 'resolved',
     }

@@ -11,6 +11,7 @@
     "check-types": "next typegen && tsc --noEmit"
   },
   "dependencies": {
+    "@marketing-workspace/analytics": "workspace:^",
     "@marketing-workspace/auth": "workspace:^",
     "@marketing-workspace/design-system": "workspace:^",
     "@marketing-workspace/email": "workspace:^",

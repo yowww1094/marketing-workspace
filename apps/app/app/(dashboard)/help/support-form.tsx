@@ -11,8 +11,8 @@ import { Loader2, Image as ImageIcon, X } from 'lucide-react';
 import { toast } from 'sonner';
 
 const formSchema = z.object({
-  type: z.enum(['bug_report', 'feature_request', 'billing_issue', 'account_access', 'general_inquiry', 'other'], {
-    required_error: 'Please select a topic.',
+  type: z.enum(['bug_report', 'feature_request', 'billing_issue', 'account_access', 'general_inquiry', 'other'] as const, {
+    message: 'Please select a topic.',
   }),
   subject: z.string().min(3, "Subject must be at least 3 characters").max(200),
   message: z.string().min(10, "Please provide more details in your message.").max(5000),

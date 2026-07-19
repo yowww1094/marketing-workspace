@@ -17,7 +17,7 @@ export async function getAIOperationsData() {
   // 1. Fetch aggregate metrics
   const { data: allJobs, error: jobsError } = await supabase
     .from('jobs')
-    .select('id, status, type, cost, error, result, created_at, updated_at')
+    .select('id, workflow_id, status, type, cost, error, result, created_at, updated_at')
     .limit(50000); 
 
   if (jobsError) {
@@ -67,7 +67,7 @@ export async function getAIOperationsData() {
 
     // Init stats group if missing
     if (!jobStats[job.type]) jobStats[job.type] = { requests: 0, success: 0, timeMs: 0 };
-    jobStats[job.type].requests++;
+    jobStats[job.type]!.requests++;
 
     // Tokens estimation (1 token ~= 4 chars of result)
     let jobTokens = 0;
@@ -85,12 +85,12 @@ export async function getAIOperationsData() {
       activeGenerations.push(job);
     } else if (job.status === 'completed' && job.created_at && job.updated_at) {
       completedCount++;
-      jobStats[job.type].success++;
+      jobStats[job.type]!.success++;
       const start = new Date(job.created_at).getTime();
       const end = new Date(job.updated_at).getTime();
       const elapsed = end - start;
       totalProcessingTimeMs += elapsed;
-      jobStats[job.type].timeMs += elapsed;
+      jobStats[job.type]!.timeMs += elapsed;
     } else if (job.status === 'failed') {
       failedGenerations.push(job);
       if (isToday) todaysFailed++;

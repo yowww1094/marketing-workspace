@@ -14,6 +14,7 @@ export type SubscriptionView = {
   user_id: string;
   email: string;
   stripe_customer_id: string | null;
+  stripe_subscription_id?: string | null;
   plan_id: string;
   status: string;
   current_period_end: string | null;
